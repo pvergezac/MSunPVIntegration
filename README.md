@@ -1,18 +1,36 @@
-# Notice
+# Routeur solaire MSunPV
+Le **MSunPV** est un routeur solaire permettant d'utiliser l'éxèdent de production solaire des panneaux pour par exemple recharger ballon d'eau chaude, ou alimenter un radiateur, au lieu de l'injecter sur le réseau.
+
+Tous les détails sont sur le site d'[Ard-Tek](https://ard-tek.com).
+
+
+# L'intégration MSunPV
+
+Cette intégration permet le suivi des mesures du routeur **MSunPV**.
+- Production instantanée des panneaux solaire
+- Consomation ou injection instantanée sur le réseau électrique
+- Routage vers le ballon d'eau chaude
+- Température du ballon (si sonde installée)
+- Production Solaire journalière
+- Consomation réseau journalière
+- Injection réseau journalière
+- Infos routeur (version, config, etc.)
+
+## A venir
+- Commande Manu/Auto Bollon et Radiateur
+- Commande TestRouteur (Inject, Zero, Moyen, Fort)
+- Consigne Température Ballon
+- Automatisation
+
+---
+---
+# Notice for Developpement
 
 The component and platforms in this repository are not meant to be used by a
 user, but as a "blueprint" that custom component developers can build
 upon, to make more awesome stuff.
 
 HAVE FUN! 😎
-
-## Why?
-
-This is simple, by having custom_components look (README + structure) the same
-it is easier for developers to help each other and for users to start using them.
-
-If you are a developer and you want to add things to this "blueprint" that you think more
-developers will have use for, please open a PR to add it :)
 
 ## What?
 
