@@ -1,12 +1,12 @@
 {
-  "domain": "integration_blueprint",
-  "name": "Integration blueprint",
+  "domain": "msunpv",
+  "name": "MSunPV Integration",
   "codeowners": [
-    "@ludeeus"
+    "@pvergezac"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/ludeeus/integration_blueprint",
+  "documentation": "https://github.com/pvergezac/MSunPVIntegration",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/ludeeus/integration_blueprint/issues",
+  "issue_tracker": "https://github.com/pvergezac/MSunPVIntegration/issues",
   "version": "0.1.0"
 }

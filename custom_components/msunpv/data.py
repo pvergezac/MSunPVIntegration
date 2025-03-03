@@ -1,4 +1,4 @@
-"""Custom types for integration_blueprint."""
+"""Custom types for msunpv."""
 
 from __future__ import annotations
 
@@ -9,17 +9,17 @@ if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.loader import Integration
 
-    from .api import IntegrationBlueprintApiClient
-    from .coordinator import BlueprintDataUpdateCoordinator
+    from .api import MsunPVApiClient
+    from .coordinator import MSunPVDataUpdateCoordinator
 
 
-type IntegrationBlueprintConfigEntry = ConfigEntry[IntegrationBlueprintData]
+type MsunPVConfigEntry = ConfigEntry[MsunPVData]
 
 
 @dataclass
-class IntegrationBlueprintData:
-    """Data for the Blueprint integration."""
+class MsunPVData:
+    """Data for the MSunPV integration."""
 
-    client: IntegrationBlueprintApiClient
-    coordinator: BlueprintDataUpdateCoordinator
+    client: MsunPVApiClient
+    coordinator: MSunPVDataUpdateCoordinator
     integration: Integration

@@ -9,4 +9,11 @@ homeassistant:
 logger:
   default: info
   logs:
-    custom_components.integration_blueprint: debug
+    custom_components.msunpv: debug
+
+
+# If you need to debug uncommment the line below (doc: https://www.home-assistant.io/integrations/debugpy/)
+debugpy:
+  start: true
+  wait: false
+  port: 5678

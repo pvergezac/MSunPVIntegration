@@ -1,8 +1,10 @@
 """
-Custom integration to integrate integration_blueprint with Home Assistant.
+Custom integration to integrate MSunPV solar router  with Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/ludeeus/integration_blueprint
+https://github.com/pvergezac/MSunPVIntegration
+
+For more details about MSunPV : https://ard-tek.com/index.php
 """
 
 from __future__ import annotations
@@ -14,15 +16,15 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
-from .api import IntegrationBlueprintApiClient
+from .api import MsunPVApiClient
 from .const import DOMAIN, LOGGER
-from .coordinator import BlueprintDataUpdateCoordinator
-from .data import IntegrationBlueprintData
+from .coordinator import MSunPVDataUpdateCoordinator
+from .data import MsunPVData
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
 
-    from .data import IntegrationBlueprintConfigEntry
+    from .data import MsunPVConfigEntry
 
 PLATFORMS: list[Platform] = [
     Platform.SENSOR,
@@ -34,17 +36,17 @@ PLATFORMS: list[Platform] = [
 # https://developers.home-assistant.io/docs/config_entries_index/#setting-up-an-entry
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: IntegrationBlueprintConfigEntry,
+    entry: MsunPVConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
-    coordinator = BlueprintDataUpdateCoordinator(
+    coordinator = MSunPVDataUpdateCoordinator(
         hass=hass,
         logger=LOGGER,
         name=DOMAIN,
         update_interval=timedelta(hours=1),
     )
-    entry.runtime_data = IntegrationBlueprintData(
-        client=IntegrationBlueprintApiClient(
+    entry.runtime_data = MsunPVData(
+        client=MsunPVApiClient(
             username=entry.data[CONF_USERNAME],
             password=entry.data[CONF_PASSWORD],
             session=async_get_clientsession(hass),
@@ -64,7 +66,7 @@ async def async_setup_entry(
 
 async def async_unload_entry(
     hass: HomeAssistant,
-    entry: IntegrationBlueprintConfigEntry,
+    entry: MsunPVConfigEntry,
 ) -> bool:
     """Handle removal of an entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
@@ -72,7 +74,7 @@ async def async_unload_entry(
 
 async def async_reload_entry(
     hass: HomeAssistant,
-    entry: IntegrationBlueprintConfigEntry,
+    entry: MsunPVConfigEntry,
 ) -> None:
     """Reload config entry."""
     await async_unload_entry(hass, entry)
