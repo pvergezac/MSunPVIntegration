@@ -12,7 +12,7 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.const import CONF_HOST, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
@@ -39,16 +39,22 @@ async def async_setup_entry(
     entry: MsunPVConfigEntry,
 ) -> bool:
     """Set up this integration using UI."""
+    LOGGER.debug(
+        "Appel de <<__init__>> async_setup_entry entry: entry_id='%s', data='%s'",
+        entry.entry_id,
+        entry.data,
+    )
+
     coordinator = MSunPVDataUpdateCoordinator(
         hass=hass,
         logger=LOGGER,
         name=DOMAIN,
-        update_interval=timedelta(hours=1),
+        update_interval=timedelta(minutes=1),
     )
+
     entry.runtime_data = MsunPVData(
         client=MsunPVApiClient(
-            username=entry.data[CONF_USERNAME],
-            password=entry.data[CONF_PASSWORD],
+            url=entry.data[CONF_HOST],
             session=async_get_clientsession(hass),
         ),
         integration=async_get_loaded_integration(hass, entry.domain),
@@ -58,7 +64,10 @@ async def async_setup_entry(
     # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
     await coordinator.async_config_entry_first_refresh()
 
+    # propage le configEntry à toutes les plateformes déclarées dans l'intégration.
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Subscrib to unload event
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
     return True

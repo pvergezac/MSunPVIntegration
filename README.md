@@ -9,16 +9,16 @@ Tous les détails sont sur le site d'[Ard-Tek](https://ard-tek.com).
 Cette intégration permet le suivi des mesures du routeur **MSunPV**.
 - Production instantanée des panneaux solaire
 - Consomation ou injection instantanée sur le réseau électrique
-- Routage vers le ballon d'eau chaude
+- Taux de routage vers le ballon d'eau chaude
 - Température du ballon (si sonde installée)
-- Production Solaire journalière
+- Production Solaire journalière et cumulée
 - Consomation réseau journalière
 - Injection réseau journalière
 - Infos routeur (version, config, etc.)
 
 ## A venir
-- Commande Manu/Auto Bollon et Radiateur
-- Commande TestRouteur (Inject, Zero, Moyen, Fort)
+- Etat des commandes Manu/Auto Ballon et Radiateur
+- Etat des commandes TestRouteur (Inject, Zero, Moyen, Fort)
 - Consigne Température Ballon
 - Automatisation
 

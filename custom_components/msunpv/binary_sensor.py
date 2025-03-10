@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 ENTITY_DESCRIPTIONS = (
     BinarySensorEntityDescription(
         key="msunpv",
-        name="MSunPV Binary Sensor",
+        name="MSunPV Demo Binary Sensor",
         device_class=BinarySensorDeviceClass.CONNECTIVITY,
     ),
 )
@@ -58,4 +58,5 @@ class MsunPVBinarySensor(MsunPVEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return true if the binary_sensor is on."""
-        return self.coordinator.data.get("title", "") == "foo"
+        """return self.coordinator.data.get("title") == "foo" """
+        return False

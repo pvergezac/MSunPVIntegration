@@ -4,9 +4,11 @@
   "codeowners": [
     "@pvergezac"
   ],
+  "dependencies": [],
   "config_flow": true,
   "documentation": "https://github.com/pvergezac/MSunPVIntegration",
-  "iot_class": "cloud_polling",
+  "integration_type": "device",
+  "iot_class": "local_polling",
   "issue_tracker": "https://github.com/pvergezac/MSunPVIntegration/issues",
   "version": "0.1.0"
 }
