@@ -1,7 +1,7 @@
 # Routeur solaire MSunPV
-Le **MSunPV** est un routeur solaire permettant d'utiliser l'éxèdent de production solaire des panneaux pour par exemple recharger ballon d'eau chaude, ou alimenter un radiateur, au lieu de l'injecter sur le réseau.
+Le **MSunPV** est un routeur solaire permettant d'utiliser l'éxèdent de production solaire des panneaux pour par exemple recharger un ballon d'eau chaude ou alimenter un radiateur, au lieu de l'injecter sur le réseau.
 
-Tous les détails sont sur le site d'[Ard-Tek](https://ard-tek.com).
+Tous les détails sur le **MSunPV** sont sur le site de [Ard-Tek](https://ard-tek.com).
 
 
 # L'intégration MSunPV
@@ -14,7 +14,7 @@ Cette intégration permet le suivi des mesures du routeur **MSunPV**.
 - Production Solaire journalière et cumulée
 - Consomation réseau journalière
 - Injection réseau journalière
-- Infos routeur (version, config, etc.)
+- Infos routeur (modele, version, config, etc.)
 
 ## A venir
 - Etat des commandes Manu/Auto Ballon et Radiateur
@@ -22,8 +22,31 @@ Cette intégration permet le suivi des mesures du routeur **MSunPV**.
 - Consigne Température Ballon
 - Automatisation
 
----
----
+## Installation
+Cette intégration nécessite HACS.
+
+- Dans HACS, à l'aide du menu (trois points en haut à droite), ajouter un **Dépot personalisé** de type **Intégration** :
+    - dépot : https://github.com/pvergezac/MSunPVIntegration
+- Dans HACS, Rechercher l'intégration **MSunPV Intégration**.
+- Télécherger l'intégration
+- Relancer Home Assistant
+- Dans : Paramètres / Appareils et services / Intégration
+    - Ajouter une intégration
+    - rechercher **MSunPV Intégration**
+
+<p><br>Ou utilisez le bouton ci-dessous :<br>
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=pvergezac&repository=https%3A%2F%2Fgithub.com%2Fpvergezac%2Fmsunpvintegration&category=Integration)<br>
+<br>
+
+## Configuration
+Saisicez l'adresse locale de votre routeur.
+- Ex : http://192.168.xxx.xxx
+<p><br>
+
+***
+***
+***
 # Notice for Developpement
 
 The component and platforms in this repository are not meant to be used by a
