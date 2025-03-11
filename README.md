@@ -49,10 +49,6 @@ Saisicez l'adresse locale de votre routeur.
 ***
 # Notice for Developpement
 
-The component and platforms in this repository are not meant to be used by a
-user, but as a "blueprint" that custom component developers can build
-upon, to make more awesome stuff.
-
 HAVE FUN! 😎
 
 ## What?
@@ -71,17 +67,5 @@ File | Purpose | Documentation
 
 ## How?
 
-~~1. Create a new repository in GitHub, using this repository as a template by clicking the "Use this template" button in the GitHub UI.~~
-~~1. Open your new repository in Visual Studio Code devcontainer (Preferably with the "`Dev Containers: Clone Repository in Named Container Volume...`" option).~~
-~~1. Rename all instances of the `integration_blueprint` to `custom_components/<your_integration_domain>` (e.g. `custom_components/awesome_integration`).~~
-~~1. Rename all instances of the `Integration Blueprint` to `<Your Integration Name>` (e.g. `Awesome Integration`).~~
-~~1. Run the `scripts/develop` to start HA and test out your new integration.~~
-
-## Next steps
-
-These are some next steps you may want to look into:
-- Add tests to your integration, [`pytest-homeassistant-custom-component`](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component) can help you get started.
-- Add brand images (logo/icon) to https://github.com/home-assistant/brands.
-- Create your first release.
-- Share your integration on the [Home Assistant Forum](https://community.home-assistant.io/).
-- Submit your integration to [HACS](https://hacs.xyz/docs/publish/start).
+1. Open this repository in Visual Studio Code devcontainer (Preferably with the "`Dev Containers: Clone Repository in Named Container Volume...`" option).
+1. Run the `scripts/develop` to start HA and test out this integration.
