@@ -61,11 +61,16 @@ class MSunPVApiData:
     tsdb: float
     tamb: float
 
+    powpv_inj: float
+    powpv_cons: float
+
     """Les cumuls journaliers et globaux"""
     consommation_jour: float
     injection_jour: float
     production_jour: float
     production_cumul: float
+    production_jour_cons: float  # Production solaire consommée (PV - injection)
+    consommation_globale: float  # Consomation globale (reseau + PV - injection)
 
     """Les param sys"""
     date: str
@@ -154,6 +159,14 @@ class MSunPVApiData:
             float(_hextoint(vals[3])) / -10.0  # de dixième de kWh, en kWh positif
         )
 
+        # Valeurs calculées
+        self.production_jour_cons = self.production_jour - self.injection_jour
+        self.consommation_globale = self.consommation_jour + self.production_jour_cons
+        self.powpv_inj = (
+            -self.powreso if (self.powpv >= 0.0 and self.powreso <= 0.0) else 0
+        )
+        self.powpv_cons = self.powpv - self.powpv_inj
+
         choutval = doc["xml"]["chOutVal"]
         self.choutvals = choutval
 
@@ -176,15 +189,6 @@ class MsunPVApiClient:
             method="get",
             url=self._base_url + "/status.xml",
         )
-
-    #    async def async_set_title(self, value: str) -> Any:
-    #        """Get data from the API."""
-    #        return await self._api_wrapper(
-    #            method="patch",
-    #            url=self._base_url,
-    #            data={"title": value},
-    #            headers={"Content-type": "application/json; charset=UTF-8"},
-    #        )
 
     async def _api_wrapper(
         self,

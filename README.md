@@ -15,6 +15,12 @@ Cette intégration permet le suivi des mesures du routeur **MSunPV**.
 - Consomation réseau journalière
 - Injection réseau journalière
 - Infos routeur (modele, version, config, etc.)
+- Instalation via HACS, et l'interface utilisateur de HA
+
+Le choix à été fait de transformer toutes les valeurs du MSunPV en valeur positives, à l'exception de la puissance consommé sur le réseau électrique, qui peut être négative en cas d'injection (export). Il semble plus logique de voir une courbe montante quand le production PV augmente. C'est également plus simple d'alimenter le Dashboard Energie de Home Assistant avec ces valeurs. (Si nécessaire on pourra doubler certaines entités pour avoir aussi les valeur en négatif).
+
+Les developpements et tests ont été réalisés sur la base d'un routeur MSunPV MS_PV2_2d, Version 5.0.1, Fw Wifi 104b, Fw Routeur 104b, en configuration d'origine.
+
 
 ## A venir
 - Etat des commandes Manu/Auto Ballon et Radiateur
