@@ -31,7 +31,7 @@ Les développements et tests ont été réalisés sur un routeur MSunPV MS_PV2_2
 [![GitHub release](https://img.shields.io/github/release/pvergezac/msunpvintegration.svg)](https://GitHub.com/pvergezac/msunpvintegration/releases/) [![GitHub tag](https://img.shields.io/github/tag/pvergezac/msunpvintegration.svg)](https://GitHub.com/pvergezac/msunpvintegration/tags/) [![GitHub license](https://badgen.net/github/license/pvergezac/msunpvintegration)](https://github.com/pvergezac/msunpvintegration/blob/master/LICENSE) [![GitHub forks](https://badgen.net/github/forks/pvergezac/msunpvintegration/)](https://GitHub.com/pvergezac/msunpvintegration/network/) [![GitHub stars](https://badgen.net/github/stars/pvergezac/msunpvintegration)](https://GitHub.com/pvergezac/msunpvintegration/stargazers/)
 
 
-- [[Documentation]](github.com/pvergezac/MSunPVIntegration/blob/main/DOCUMENTATION/Documentation.md)
+- [[Documentation]](https://github.com/pvergezac/MSunPVIntegration/blob/main/DOCUMENTATION/Documentation.md)
 - [[Issues]](https://github.com/pvergezac/MSunPVIntegration/issues)
 - [[MSunPV Integration]  on Home Assistant Community](https://community.home-assistant.io/t/msunpv-solar-router-integration/862047)
 - [[MSunPV Integration]  sur le Forum Ard-Tek](https://ard-tek.com/index.php/forum/bienvenue/2747-home-assistant-integration-msunpv-hacs)
