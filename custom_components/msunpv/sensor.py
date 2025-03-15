@@ -100,7 +100,7 @@ ENTITY_DESCRIPTIONS = (
     SensorEntityDescription(
         key="production_jour",
         name="Energie Production Solaire",
-        icon="mdi:solar-power",
+        icon="mdi:counter",
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL,
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
@@ -109,7 +109,7 @@ ENTITY_DESCRIPTIONS = (
     SensorEntityDescription(
         key="production_cumul",
         name="Energie Production Solaire (cumul)",
-        icon="mdi:solar-power",
+        icon="mdi:counter",
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,

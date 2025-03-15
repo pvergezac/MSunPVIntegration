@@ -1,5 +1,5 @@
 # Routeur solaire MSunPV
-Le **MSunPV** est un routeur solaire permettant d'utiliser l'éxèdent de production solaire des panneaux pour par exemple recharger un ballon d'eau chaude ou alimenter un radiateur, au lieu de l'injecter sur le réseau.
+Le **MSunPV** est un routeur solaire permettant d'utiliser l’excédant de production solaire des panneaux pour par exemple recharger un ballon d'eau chaude ou alimenter un radiateur, au lieu de l'injecter sur le réseau.
 
 Tous les détails sur le **MSunPV** sont sur le site de [Ard-Tek](https://ard-tek.com).
 
@@ -8,51 +8,71 @@ Tous les détails sur le **MSunPV** sont sur le site de [Ard-Tek](https://ard-te
 
 Cette intégration permet le suivi des mesures du routeur **MSunPV**.
 - Production instantanée des panneaux solaire
-- Consomation ou injection instantanée sur le réseau électrique
+- Consommation ou injection instantanée sur le réseau électrique
 - Taux de routage vers le ballon d'eau chaude
 - Température du ballon (si sonde installée)
 - Production Solaire journalière et cumulée
-- Consomation réseau journalière
+- Consommation réseau journalière
 - Injection réseau journalière
-- Infos routeur (modele, version, config, etc.)
-- Instalation via HACS, et l'interface utilisateur de HA
+- Valeurs complémentaires calculés (Consommation totale, production consommée, etc.)
+- Infos routeur (modèle, version, config, etc.)
+- Installation et mises à jour via HACS, et l'interface graphique de HA
 
-Le choix à été fait de transformer toutes les valeurs du MSunPV en valeur positives, à l'exception de la puissance consommé sur le réseau électrique, qui peut être négative en cas d'injection (export). Il semble plus logique de voir une courbe montante quand le production PV augmente. C'est également plus simple d'alimenter le Dashboard Energie de Home Assistant avec ces valeurs. (Si nécessaire on pourra doubler certaines entités pour avoir aussi les valeur en négatif).
+Le choix à été fait de transformer les valeurs du MSunPV en valeur positives (sauf puissance réseau, négative en cas d'injection).
+Il semble plus logique de voir une courbe montante quand le production PV augmente. C'est également plus simple d'alimenter le Dashboard Energie de Home Assistant avec ces valeurs. (On pourra si nécessaire, doubler certaines entités pour avoir aussi les valeur en négatif comme sur le routeur).
 
-Les developpements et tests ont été réalisés sur la base d'un routeur MSunPV MS_PV2_2d, Version 5.0.1, Fw Wifi 104b, Fw Routeur 104b, en configuration d'origine.
+Les développements et tests ont été réalisés sur un routeur MSunPV MS_PV2_2d, V5.0.1, Fw Wifi 104b, Fw Routeur 104b, en configuration d'origine.
 
 
-## A venir
-- Etat des commandes Manu/Auto Ballon et Radiateur
-- Etat des commandes TestRouteur (Inject, Zero, Moyen, Fort)
-- Consigne Température Ballon
-- Automatisation
+![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white) [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![hacs][hacsbadge]][hacs]
+
+## A propos
+[![GitHub Release][releases-shield]][releases]
+[![GitHub Activity][commits-shield]][commits]
+[![License][license-shield]](LICENSE)
+
+[![GitHub release](https://img.shields.io/github/release/pvergezac/msunpvintegration.svg)](https://GitHub.com/pvergezac/msunpvintegration/releases/) [![GitHub tag](https://img.shields.io/github/tag/pvergezac/msunpvintegration.svg)](https://GitHub.com/pvergezac/msunpvintegration/tags/) [![GitHub license](https://badgen.net/github/license/pvergezac/msunpvintegration)](https://github.com/pvergezac/msunpvintegration/blob/master/LICENSE) [![GitHub forks](https://badgen.net/github/forks/pvergezac/msunpvintegration/)](https://GitHub.com/pvergezac/msunpvintegration/network/) [![GitHub stars](https://badgen.net/github/stars/pvergezac/msunpvintegration)](https://GitHub.com/pvergezac/msunpvintegration/stargazers/)
+
+- [[Documentation]](github.com/pvergezac/MSunPVIntegration/blob/main/DOCUMENTATION/Documentation.md)
+- [[Issues]](https://github.com/pvergezac/MSunPVIntegration/issues)
+- [[MSunPV Integration]  on Home Assistant Community](https://community.home-assistant.io/t/msunpv-solar-router-integration/862047)
+- [[MSunPV Integration]  sur le Forum Ard-Tek](https://ard-tek.com/index.php/forum/bienvenue/2747-home-assistant-integration-msunpv-hacs)
+
+## A venir (TODO)
+- État et pilotage des commandes Manu/Auto (ballon & radiateur)
+- État et pilotage des commandes TestRouteur (Inject, Zéro, Moyen, Fort)
+- État et pilotage des consignes de température (ballon & radiateur)
+- Automatisations
+
+L'idée est de pouvoir agir sur le routage depuis HA, pour par exemple intégrer les prévisions de production du lendemain, ou prioriser par rapport à la filtration d'un piscine, ou encore tenir compte de la couleur du jour de TEMPO.
+
 
 ## Installation
 Cette intégration nécessite HACS.
 
-- Dans HACS, à l'aide du menu (trois points en haut à droite), ajouter un **Dépot personalisé** de type **Intégration** :
-    - dépot : https://github.com/pvergezac/MSunPVIntegration
+- Dans HACS, à l'aide du menu (trois points en haut à droite), ajouter un **Dépôt personnalisé** de type **Intégration** :
+    - dépôt : https://github.com/pvergezac/MSunPVIntegration
 - Dans HACS, Rechercher l'intégration **MSunPV Intégration**.
-- Télécherger l'intégration
+- Télécharger l'intégration
 - Relancer Home Assistant
 - Dans : Paramètres / Appareils et services / Intégration
     - Ajouter une intégration
     - rechercher **MSunPV Intégration**
 
-<p><br>Ou utilisez le bouton ci-dessous :<br>
+<p>Ou utilisez le bouton ci-dessous :<br>
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=pvergezac&repository=https%3A%2F%2Fgithub.com%2Fpvergezac%2Fmsunpvintegration&category=Integration)<br>
-<br>
+
 
 ## Configuration
-Saisicez l'adresse locale de votre routeur.
+Saisissez l'adresse locale de votre routeur.
 - Ex : http://192.168.xxx.xxx
+
 <p><br>
 
 ***
 ***
-***
+
 # Notice for Developpement
 
 HAVE FUN! 😎
