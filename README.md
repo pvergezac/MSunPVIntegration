@@ -24,14 +24,12 @@ Il semble plus logique de voir une courbe montante quand le production PV augmen
 Les développements et tests ont été réalisés sur un routeur MSunPV MS_PV2_2d, V5.0.1, Fw Wifi 104b, Fw Routeur 104b, en configuration d'origine.
 
 
-![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white) [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![hacs][hacsbadge]][hacs]
-
 ## A propos
-[![GitHub Release][releases-shield]][releases]
-[![GitHub Activity][commits-shield]][commits]
-[![License][license-shield]](LICENSE)
+
+![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white) [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs) ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
 [![GitHub release](https://img.shields.io/github/release/pvergezac/msunpvintegration.svg)](https://GitHub.com/pvergezac/msunpvintegration/releases/) [![GitHub tag](https://img.shields.io/github/tag/pvergezac/msunpvintegration.svg)](https://GitHub.com/pvergezac/msunpvintegration/tags/) [![GitHub license](https://badgen.net/github/license/pvergezac/msunpvintegration)](https://github.com/pvergezac/msunpvintegration/blob/master/LICENSE) [![GitHub forks](https://badgen.net/github/forks/pvergezac/msunpvintegration/)](https://GitHub.com/pvergezac/msunpvintegration/network/) [![GitHub stars](https://badgen.net/github/stars/pvergezac/msunpvintegration)](https://GitHub.com/pvergezac/msunpvintegration/stargazers/)
+
 
 - [[Documentation]](github.com/pvergezac/MSunPVIntegration/blob/main/DOCUMENTATION/Documentation.md)
 - [[Issues]](https://github.com/pvergezac/MSunPVIntegration/issues)
