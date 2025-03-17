@@ -26,7 +26,7 @@ Les développements et tests ont été réalisés sur un routeur MSunPV MS_PV2_2
 
 ## A propos
 
-![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white) [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs) ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white) [![Hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs) ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white) ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
 [![GitHub release](https://img.shields.io/github/release/pvergezac/msunpvintegration.svg)](https://GitHub.com/pvergezac/msunpvintegration/releases/) ![GitHub Release Date](https://img.shields.io/github/release-date/pvergezac/MSunPVIntegration) [![Github All Releases](https://img.shields.io/github/downloads/pvergezac/MSunPVIntegration/total.svg)]() [![GitHub license](https://badgen.net/github/license/pvergezac/msunpvintegration)](https://github.com/pvergezac/msunpvintegration/blob/master/LICENSE) [![GitHub forks](https://badgen.net/github/forks/pvergezac/msunpvintegration/)](https://GitHub.com/pvergezac/msunpvintegration/network/) [![GitHub stars](https://badgen.net/github/stars/pvergezac/msunpvintegration)](https://GitHub.com/pvergezac/msunpvintegration/stargazers/)
 
@@ -93,3 +93,7 @@ File | Purpose | Documentation
 
 1. Open this repository in Visual Studio Code devcontainer (Preferably with the "`Dev Containers: Clone Repository in Named Container Volume...`" option).
 1. Run the `scripts/develop` to start HA and test out this integration.
+
+##  Contributions are welcome!
+
+If you want to contribute to this please read the [Contribution guidelines](https://github.com/pvergezac/MSunPVIntegration/blob/main/CONTRIBUTING.md).
