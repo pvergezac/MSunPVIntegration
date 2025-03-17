@@ -38,7 +38,7 @@ Exemple:
 
 ## Propositions d'affichages
 
-Vous pouvez utiliser la carte d'affichage '**Tesla solar card**', pour une représentation graphique des puissances instantanées (production, consommation/injection réseau, consommation maison, temperature ballon).
+Vous pouvez utiliser la carte d'affichage [Tesla solar card](https://github.com/reptilex/tesla-style-solar-power-card), pour une représentation graphique des puissances instantanées (production, consommation/injection réseau, consommation maison, temperature ballon).
 
 Cette carte est disponible dans **HACS** sous le nom : **tesla-style-solar-power-card**
 
