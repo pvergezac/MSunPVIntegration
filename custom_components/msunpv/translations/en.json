@@ -1,23 +1,38 @@
 {
+    "title": "MSunPV",
     "config": {
+        "flow_title": "Configuration MSunPV",
         "step": {
             "user": {
-                "description": "Connexion MSunPV",
                 "data": {
                     "url": "Url",
-                    "sonde_bal": "Sonde ballon",
-                    "username": "Username",
-                    "password": "Password"
+                    "msunpv_type": "Type du routeur",
+                    "nom": "Nom",
+                    "sondes_comp": "Sondes complémentaires"
+                },
+                "data_description": {
+                    "url": "Url du routeur, sous la forme http://<adresse_ip_routeur>",
+                    "msunpv_type": "Sélectionnez le modèle correspondant a votre routeur",
+                    "nom": "Nom désignant ce routeur dans votre installation",
+                    "sondes_comp": "Sondes complémentaires génériques (8-15)"
                 }
             }
         },
         "error": {
-            "auth": "Username/Password is wrong.",
-            "connection": "Unable to connect to the server.",
-            "unknown": "Unknown error occurred."
+            "auth": "Erreur d'identification (Username/Password).",
+            "connection": "Impossible de se connecter au routeur.",
+            "unknown": "Une erreur indeterminée est survenue."
         },
         "abort": {
-            "already_configured": "This entry is already configured."
+            "already_configured": "Cette entrée est déjà configurée."
+        }
+    },
+    "selector": {
+        "msunpv_type": {
+            "options": {
+                "MS_PV2_2d": "MS_PV2_2d",
+                "MS_PV4_4d": "MS_PV4_4d"
+            }
         }
     }
 }

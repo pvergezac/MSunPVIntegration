@@ -15,7 +15,14 @@ from .api import (
     MsunPVApiClientCommunicationError,
     MsunPVApiClientError,
 )
-from .const import DOMAIN, LOGGER
+from .const import (
+    CONF_MSUNPV_TYPE,
+    CONF_MSUNPV_TYPES,
+    CONF_SONDES_COMP,
+    DOMAIN,
+    LOGGER,
+    MSPV_2_2d,
+)
 
 
 class MSunPVFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -33,6 +40,8 @@ class MSunPVFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             try:
                 await self._test_api(
                     url=user_input[CONF_HOST],
+                    router_type=user_input[CONF_MSUNPV_TYPE],
+                    sondes_comp=str(user_input[CONF_SONDES_COMP]) == "True",
                 )
             except MsunPVApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
@@ -52,31 +61,43 @@ class MSunPVFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 )
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
-                    title=user_input[CONF_HOST],
-                    data=user_input,
+                    title=user_input[CONF_HOST], data=user_input
                 )
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_HOST): selector.TextSelector(
+                    vol.Required(CONF_HOST, default="http://"): selector.TextSelector(
                         selector.TextSelectorConfig(
                             type=selector.TextSelectorType.URL,
                         )
                     ),
-                    vol.Required("sonde_bal"): selector.BooleanSelector(
+                    vol.Required(
+                        CONF_MSUNPV_TYPE, default=MSPV_2_2d
+                    ): selector.SelectSelector(
+                        selector.SelectSelectorConfig(
+                            options=CONF_MSUNPV_TYPES,
+                            mode=selector.SelectSelectorMode.DROPDOWN,
+                        )
+                    ),
+                    vol.Required("nom", default="MsunPV-1"): selector.TextSelector(
+                        selector.TextSelectorConfig()
+                    ),
+                    vol.Required(CONF_SONDES_COMP): selector.BooleanSelector(
                         selector.BooleanSelectorConfig()
                     ),
-                },
+                }
             ),
             errors=_errors,
         )
 
-    async def _test_api(self, url: str) -> None:
+    async def _test_api(self, url: str, router_type: str, sondes_comp: bool) -> None:  # noqa: FBT001
         """Validate api url."""
         client = MsunPVApiClient(
             url=url,
+            router_type=router_type,
+            sondes_comp=sondes_comp,
             session=async_create_clientsession(self.hass),
         )
         await client.async_get_data()

@@ -17,7 +17,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import MsunPVApiClient
-from .const import DOMAIN, LOGGER
+from .const import CONF_MSUNPV_TYPE, CONF_SONDES_COMP, DOMAIN, LOGGER
 from .coordinator import MSunPVDataUpdateCoordinator
 from .data import MsunPVData
 
@@ -52,9 +52,13 @@ async def async_setup_entry(
         update_interval=timedelta(minutes=1),
     )
 
+    with_sonde_comp: bool = str(entry.data[CONF_SONDES_COMP]) == "True"
+
     entry.runtime_data = MsunPVData(
         client=MsunPVApiClient(
             url=entry.data[CONF_HOST],
+            router_type=entry.data[CONF_MSUNPV_TYPE],
+            sondes_comp=with_sonde_comp,
             session=async_get_clientsession(hass),
         ),
         integration=async_get_loaded_integration(hass, entry.domain),

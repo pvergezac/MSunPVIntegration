@@ -63,8 +63,11 @@ Cette intégration nécessite HACS.
 
 
 ## Configuration
-Saisissez l'adresse locale de votre routeur.
-- Ex : http://192.168.xxx.xxx
+Saisissez :
+- l'adresse locale de votre routeur.
+  - Ex : http://192.168.xxx.xxx (**http** uniquement)
+- le nom désignant le routeur dans votre installation
+- l'activation ou non des sondes complémentaires 8 à 15
 
 <p><br>
 

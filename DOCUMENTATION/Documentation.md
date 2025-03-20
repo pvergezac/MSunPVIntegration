@@ -23,6 +23,21 @@
 | rssi | Wifi signal | dB | Niveau de réception du signal WiFi |
 | modele | Modèle du routeur | -- | Modèle du routeur |
 
+## Entités complémentaires
+Si vous avez activé les sondes complémentaires générique lors de la configuration.
+| Clé     | Nom         | Unité | Description        |
+|:--------|:------------|:-----:|:-------------------|
+| sonde_8 | Sonde8 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_9 | Sonde9 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_10 | Sonde10 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_11 | Sonde11 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_12 | Sonde12 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_13 | Sonde13 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_14 | Sonde14 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_15 | Sonde15 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+
+Pour plus de clarté, vous pouvez modifier les caractéristiques de ces entités avec un nom plus parlante, et une unité approprié.
+
 
 ## Configuration du Dashboard Energie
 Pour fonctionner, le **Dashboard Energie** a besoin d'être configuré. Les données fournie par le **MSunPV** peuvent être utilisées pour l'alimenter.
