@@ -4,8 +4,8 @@
   "codeowners": [
     "@pvergezac"
   ],
-  "dependencies": [],
   "config_flow": true,
+  "dependencies": [],
   "documentation": "https://github.com/pvergezac/MSunPVIntegration",
   "integration_type": "device",
   "iot_class": "local_polling",
