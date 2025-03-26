@@ -1,7 +1,6 @@
 {
     "name": "MSunPV",
     "render_readme": true,
-    "iot_class": "local_polling",
     "homeassistant": "2025.2.4",
     "hacs": "2.0.1"
 }
