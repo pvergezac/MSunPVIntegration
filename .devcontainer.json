@@ -1,5 +1,6 @@
 {
-    "name": "ludeeus/integration_blueprint",
+    // "name": "ludeeus/integration_blueprint",
+    "name": "MSunPVIntegration DevEnv",
     "image": "mcr.microsoft.com/devcontainers/python:3.13",
     "postCreateCommand": "scripts/setup",
     "forwardPorts": [
@@ -27,6 +28,7 @@
                 "editor.formatOnSave": true,
                 "editor.formatOnType": false,
                 "files.trimTrailingWhitespace": true,
+
                 "python.analysis.typeCheckingMode": "basic",
                 "python.analysis.autoImportCompletions": true,
                 "python.defaultInterpreterPath": "/usr/local/bin/python",
