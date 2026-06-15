@@ -1,15 +1,13 @@
 {
   "domain": "msunpv",
   "name": "MSunPV Integration",
-  "codeowners": [
-    "@pvergezac"
-  ],
+  "codeowners": ["@pvergezac"],
   "config_flow": true,
+  "dependencies": [],
   "documentation": "https://github.com/pvergezac/MSunPVIntegration",
-  "issue_tracker": "https://github.com/pvergezac/MSunPVIntegration/issues",
   "integration_type": "device",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/pvergezac/MSunPVIntegration/issues",
   "requirements": [],
-  "dependencies": [],
   "version": "0.1.5"
 }
