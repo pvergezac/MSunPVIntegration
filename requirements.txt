@@ -17,6 +17,6 @@ pytest-cov>=4.1.0
 types-python-dateutil
 
 # Home Assistant et dépendances
-homeassistant>=2026.6.1
+homeassistant>=2026.2.3
 zlib_ng
 isal
