@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
 import asyncio
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 
@@ -74,8 +74,8 @@ class MsunPVSwitch(MsunPVEntity, SwitchEntity):
 
     def turn_on(self, **kwargs: Any) -> None:
         """Turn on the switch (sync wrapper)."""
-        asyncio.create_task(self.async_turn_on(**kwargs))
+        # asyncio.create_task(self.async_turn_on(**kwargs))
 
     def turn_off(self, **kwargs: Any) -> None:
         """Turn off the switch (sync wrapper)."""
-        asyncio.create_task(self.async_turn_off(**kwargs))
+        # asyncio.create_task(self.async_turn_off(**kwargs))
