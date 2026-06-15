@@ -11,7 +11,7 @@
                     "sondes_comp": "Sondes complémentaires"
                 },
                 "data_description": {
-                    "url": "Url du routeur, sous la forme http://<adresse_ip_routeur>",
+                    "url": "Url locale du routeur (http:)//(adresse_ip_routeur)",
                     "msunpv_type": "Sélectionnez le modèle correspondant à votre routeur",
                     "nom": "Nom désignant ce routeur dans votre installation",
                     "sondes_comp": "Sondes complémentaires génériques (8-15)"
