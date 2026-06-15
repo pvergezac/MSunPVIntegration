@@ -1,7 +1,7 @@
 {
     // "name": "ludeeus/integration_blueprint",
-    "name": "MSunPVIntegration DevEnv",
-    "image": "mcr.microsoft.com/devcontainers/python:3.13",
+    "name": "MSunPV DevEnv",
+    "image": "mcr.microsoft.com/devcontainers/python:3.14",
     "postCreateCommand": "scripts/setup",
     "forwardPorts": [
         8123
@@ -19,6 +19,10 @@
                 "github.vscode-pull-request-github",
                 "ms-python.python",
                 "ms-python.vscode-pylance",
+                "ms-python.isort",
+                "ms-python.pylint",
+                "ms-python.black-formatter",
+                "donjayamanne.githistory",
                 "ryanluker.vscode-coverage-gutters",
                 "yzhang.markdown-all-in-one"
             ],
@@ -33,6 +37,7 @@
                 },
                 "terminal.integrated.defaultProfile.linux": "Bash Profile",
 
+                "python.formatting.provider": "black",
                 "editor.formatOnPaste": true,
                 "editor.formatOnSave": true,
                 "editor.formatOnType": false,

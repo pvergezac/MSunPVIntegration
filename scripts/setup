@@ -5,3 +5,4 @@ set -e
 cd "$(dirname "$0")/.."
 pip install --upgrade pip
 python3 -m pip install --requirement requirements.txt
+wget -O - https://get.hacs.xyz | bash -
