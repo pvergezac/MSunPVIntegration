@@ -30,8 +30,8 @@
     "selector": {
         "msunpv_type": {
             "options": {
-                "MS_PV2_2d": "MS_PV2_2d",
-                "MS_PV4_4d": "MS_PV4_4d"
+                "mspv2_2d": "MS_PV2_2d",
+                "mspv4_4d": "MS_PV4_4d"
             }
         }
     }

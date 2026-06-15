@@ -1,3 +1,5 @@
+<div align="center">
+
 # MsunPV Integration
 
 ![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white)
@@ -18,10 +20,14 @@
 - [**MSunPV Integration** on Home Assistant Community](https://community.home-assistant.io/t/msunpv-solar-router-integration/862047)
 - [**MSunPV Integration**  sur le Forum Ard-Tek](https://ard-tek.com/index.php/forum/bienvenue/2747-home-assistant-integration-msunpv-hacs)
 
-## L'intégration MSunPV
 
-Cette intégration permet le suivi des mesures du routeur **MSunPV**.
+</div>
 
+## 📋 Description
+
+**MsunPV Integration** est une intégration personnalisée pour **Home Assistant** qui permet le suivi des mesures du routeur solaire **MSunPV** de [**Ard-Tek**](https://ard-tek.com).
+
+L'intégration permet de suivre des mesures :
 - Production instantanée des panneaux solaire
 - Consommation ou injection instantanée sur le réseau électrique
 - Taux de routage vers le ballon d'eau chaude
@@ -53,24 +59,53 @@ Le routeur solaire **MSunPV** de [**Ard-Tek**](https://ard-tek.com) permet d'uti
 
 Tous les détails sur le routeur **MSunPV** sont sur le site de [Ard-Tek](https://ard-tek.com).
 
-## Installation
+## 📦 Installation via HACS (recommandé)
 
-Cette intégration nécessite HACS.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=pvergezac&repository=MSunPVIntegration=integration)
 
-- Dans HACS, à l'aide du menu (trois points en haut à droite), ajouter un **Dépôt personnalisé** de type **Intégration** :
-  - url du dépôt : ```https://github.com/pvergezac/MSunPVIntegration```
-- Dans HACS, Rechercher l'intégration **MSunPV Intégration**.
-- Télécharger l'intégration
-- Relancer Home Assistant
-- Dans : Paramètres / Appareils et Services / Intégration
-  - Ajouter une intégration
-  - rechercher **MSunPV Intégration**
+### Prérequis
 
-Ou utilisez le bouton ci-dessous :
+- Home Assistant version 2025.2.4 ou supérieure
+- [HACS installé](https://hacs.xyz/docs/setup/download) sur votre instance Home Assistant
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=pvergezac&repository=https%3A%2F%2Fgithub.com%2Fpvergezac%2Fmsunpvintegration&category=Integration)
+### Étape 1 — Ajouter le dépôt personnalisé dans HACS
 
-## Configuration
+> HACS ne référence pas encore ce dépôt par défaut. Ajoutez-le manuellement.
+
+1. Dans Home Assistant, ouvrez **HACS** dans la barre latérale
+2. Cliquez sur les **⋮** (trois points) en haut à droite
+3. Sélectionnez **Dépôts personnalisés**
+4. Dans le champ **Dépôt**, saisissez l'URL du dépôt GitHub :
+   ```
+   https://github.com/pvergezac/MSunPVIntegration
+   ```
+5. Dans **Catégorie**, sélectionnez **Intégration**
+6. Cliquez sur **Ajouter**
+
+### Étape 2 — Installer l'intégration
+
+1. Toujours dans HACS, allez dans **Intégrations**
+2. Cliquez sur **+ Explorer et télécharger des dépôts**
+3. Recherchez **MSunPV Intégration**
+4. Cliquez sur le résultat puis sur **Télécharger**
+5. Confirmez en cliquant sur **Télécharger** dans la fenêtre de confirmation
+
+### Étape 3 — Redémarrer Home Assistant
+
+Après l'installation, un redémarrage est nécessaire :
+
+**Paramètres → Système → Redémarrer → Redémarrer Home Assistant**
+
+Attendez que Home Assistant soit complètement redémarré avant de continuer.
+
+
+---
+
+## ⚙️ Configuration
+
+### Étape 1 — Ajouter l'intégration
+
+**Paramètres → Appareils et services → Ajouter une intégration → MSunPV Intégration**
 
 Saisissez :
 
@@ -105,6 +140,21 @@ This repository contains multiple files, here is a overview:
 1. Open this repository in **Visual Studio Code** devcontainer (Preferably with the "`Dev Containers: Clone Repository in Named Container Volume...`" option).
 1. Run the `scripts/develop` to start HA and test out this integration.
 
-### Contributions are welcome
+# 🤝 Contribution
 
-If you want to contribute to this please read the [Contribution guidelines](https://github.com/pvergezac/MSunPVIntegration/blob/main/CONTRIBUTING.md).
+Les contributions sont les bienvenues ! Pour signaler un bug ou proposer une amélioration, ouvrez une [issue](https://github.com/pvergezac/SmartPoolFiltraMSunPVIntegrationtionManager/issues) sur GitHub.
+
+---
+
+## 📄 Licence
+
+Ce projet est distribué sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+<div align="center">
+Fait avec ❤️ pour la communauté Home Assistant francophone
+
+Si vous aimez ce projet, ajouter une ⭐ étoile sur [Github](https://github.com/pvergezac/![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/pvergezac/MSunPVIntegration/total)
+)
+</div>

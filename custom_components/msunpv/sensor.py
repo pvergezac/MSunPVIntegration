@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
+from dateutil import tz
 from homeassistant.components.sensor import (
     DOMAIN as SENSOR_DOMAIN,
 )
@@ -15,18 +17,25 @@ from homeassistant.components.sensor import (  # pyright: ignore[reportMissingIm
 )
 from homeassistant.const import UnitOfEnergy, UnitOfPower, UnitOfTemperature
 
-from .const import CONF_MSUNPV_TYPE, CONF_SONDES_COMP, LOGGER, MSPV_2_2d, MSPV_4_4d
+from .const import (
+    CONF_MSUNPV_TYPE,
+    CONF_SONDES_COMP,
+    DOMAIN,
+    LOGGER,
+    MSPV_2_2D,
+    MSPV_4_4D,
+)
 from .entity import MsunPVEntity
 
 if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
     from .coordinator import MSunPVDataUpdateCoordinator
-    from .data import MsunPVConfigEntry
 
 
-ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_2_2d = (
+ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_2_2 = (
     SensorEntityDescription(
         key="outbal",
         name="Ratio routage Ballon",
@@ -43,7 +52,7 @@ ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_2_2d = (
     ),
 )
 
-ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_4_4d = (
+ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_4_4 = (
     SensorEntityDescription(
         key="outbal",
         name="Puissance routage Ballon",
@@ -170,8 +179,26 @@ ENTITY_DESCRIPTIONS = (
     ),
     SensorEntityDescription(
         key="consommation_globale",
-        name="Energie Consommation globale",
+        name="Energie Consommation globale jour",
         icon="mdi:solar-power",
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="consommation_reseau_cumul",
+        name="Energie Consommation réseaux (cumul)",
+        icon="mdi:transmission-tower-import",
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL,
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=1,
+    ),
+    SensorEntityDescription(
+        key="injection_reseau_cumul",
+        name="Energie Injection reseau (cumul)",
+        icon="mdi:transmission-tower-export",
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL,
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
@@ -271,16 +298,19 @@ ENTITY_DESCRIPTIONS_COMP = (
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,  # noqa: ARG001 Unused function argument: `hass`
-    entry: MsunPVConfigEntry,
+    hass: HomeAssistant,
+    entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the sensor platform."""
+    coordinator: MSunPVDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+
     type_router: str = entry.data[CONF_MSUNPV_TYPE]
     with_sonde_comp: bool = str(entry.data[CONF_SONDES_COMP]) == "True"
 
     LOGGER.debug(
-        "Appel <sensor> async_setup_entry : entry_id='%s', data='%s', router_type='%s', sonde_comp='%r'",  # noqa: E501
+        "Appel <sensor> async_setup_entry : "
+        "entry_id='%s', data='%s', router_type='%s', sonde_comp='%r'",
         entry.entry_id,
         entry.data,
         type_router,
@@ -291,12 +321,12 @@ async def async_setup_entry(
 
     list_ent = ENTITY_DESCRIPTIONS
 
-    if type_router == MSPV_4_4d:
+    if type_router == MSPV_4_4D:
         LOGGER.debug("Pour mspv 4x4")
-        list_ent += ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_4_4d
-    elif type_router == MSPV_2_2d:
+        list_ent += ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_4_4
+    elif type_router == MSPV_2_2D:
         LOGGER.debug("Pour mspv 2x2")
-        list_ent += ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_2_2d
+        list_ent += ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_2_2
 
     ##if str(entry.data[CONF_SONDES_COMP]) == "True":
     if with_sonde_comp:
@@ -306,7 +336,7 @@ async def async_setup_entry(
     async_add_entities(
         MsunPVSensor(
             entry_id=entry.entry_id,
-            coordinator=entry.runtime_data.coordinator,
+            coordinator=coordinator,  # entry.runtime_data.coordinator,
             entity_description=entity_description,
         )
         for entity_description in list_ent
@@ -344,4 +374,14 @@ class MsunPVSensor(MsunPVEntity, SensorEntity):
         if self.coordinator.data:
             return {"last_update": self.coordinator.data.get("time")}
 
+        return None
+
+    @property
+    def last_reset(self) -> datetime | None:
+        """Return the last reset time of the sensor."""
+        if self.state_class in {
+            SensorStateClass.TOTAL,
+        }:
+            start: datetime = datetime.now(tz.tzutc())
+            return start.replace(hour=0, minute=0, second=0, microsecond=0)
         return None
