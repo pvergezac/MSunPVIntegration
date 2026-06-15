@@ -1,6 +1,22 @@
 colorlog==6.10.1
-homeassistant>=2026.6.1
 pip>=26.0.1
+
+# Outils de qualité de code
+black>=24.0.0
 ruff==0.14.3
+mypy>=1.8.0
+pylint>=3.0.0
+
+# Tests
+pytest>=7.4.0
+pytest-asyncio>=0.23.0
+pytest-homeassistant-custom-component>=0.13.0
+pytest-cov>=4.1.0
+
+# Types stubs
+types-python-dateutil
+
+# Home Assistant et dépendances
+homeassistant>=2026.6.1
 zlib_ng
 isal
