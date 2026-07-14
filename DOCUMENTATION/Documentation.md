@@ -1,15 +1,14 @@
 # Documentation de l'intégration MSunPV pour Home Assistant
 
-
 ## Description des entités
 
-| Clé     | Nom         | Unité | Description        |
-|:--------|:------------|:-----:|:-------------------|
-| powreso | Puissance Réseau |kW| Puissance instantanée consommée sur le réseau (positif si conso, négatif si injection)|
-| powpv | Puissance Solaire | kW | Puissance instantanée produite par les panneaus solaires (positif)|
+| Clé | Nom | Unité | Description |
+| :-- | :-- | :---: | :---------- |
+| powreso | Puissance Réseau | kW | Puissance instantanée consommée sur le réseau (positif si conso, négatif si injection) |
+| powpv | Puissance Solaire | kW | Puissance instantanée produite par les panneaus solaires (positif) |
 | outbal | Routage Ballon | % | Taux de routage vers le ballon |
 | outrad | Routage Radiateur | % | Taux de routage vers le radiateur |
-| tbal | Température ballon | °C | Température du ballon (si sonde)|
+| tbal | Température ballon | °C | Température du ballon (si sonde) |
 | tsdb | Température Salle de bain | °C | Température de la salle de bain (si sonde) |
 | tamb | Température ambiante | °C | Température ambiante (si sonde) |
 | consommation_jour | Energie Import Réseau | kWh | Energie journalière importée du réseau |
@@ -24,25 +23,28 @@
 | modele | Modèle du routeur | -- | Modèle du routeur |
 
 ## Entités complémentaires
+
 Si vous avez activé les sondes complémentaires générique lors de la configuration.
-| Clé     | Nom         | Unité | Description        |
-|:--------|:------------|:-----:|:-------------------|
-| sonde_8 | Sonde8 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
-| sonde_9 | Sonde9 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
-| sonde_10 | Sonde10 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
-| sonde_11 | Sonde11 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
-| sonde_12 | Sonde12 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
-| sonde_13 | Sonde13 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
-| sonde_14 | Sonde14 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
-| sonde_15 | Sonde15 |--| Valeur numérique décimale transmise, sans mise à l'échelle |
+
+| Clé | Nom | Unité | Description |
+| :-- | :-- | :---: | :---------- |
+| sonde_8 | Sonde8 | -- | Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_9 | Sonde9 | -- | Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_10 | Sonde10 | -- | Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_11 | Sonde11 | -- | Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_12 | Sonde12 | -- | Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_13 | Sonde13 | -- | Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_14 | Sonde14 | -- | Valeur numérique décimale transmise, sans mise à l'échelle |
+| sonde_15 | Sonde15 | -- | Valeur numérique décimale transmise, sans mise à l'échelle |
 
 Pour plus de clarté, vous pouvez modifier les caractéristiques de ces entités avec un nom plus parlante, et une unité approprié.
 
-
 ## Configuration du Dashboard Energie
+
 Pour fonctionner, le **Dashboard Energie** a besoin d'être configuré. Les données fournie par le **MSunPV** peuvent être utilisées pour l'alimenter.
-| Paramètre          | Entité                    |
-|:-------------------|:--------------------------|
+
+| Paramètre | Entité |
+| :-------- | :----- |
 | Consommation du réseau | Energie Import Réseau |
 | Retourné au réseau | Energie Export Réseau |
 | Production solaire | Energie Production Solaire |
@@ -62,4 +64,3 @@ Cette carte est disponible dans **HACS** sous le nom : **tesla-style-solar-power
 Exemples de cartes:
 
 ![alt text](image-3.png) ![alt text](image-4.png) ![alt text](image-5.png)
-

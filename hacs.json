@@ -1,6 +1,6 @@
 {
     "name": "MSunPV",
     "render_readme": true,
-    "homeassistant": "2025.2.4",
+    "homeassistant": "2026.2.3",
     "hacs": "2.0.1"
 }
