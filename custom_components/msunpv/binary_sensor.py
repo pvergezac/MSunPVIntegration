@@ -14,8 +14,7 @@ from homeassistant.components.binary_sensor import (
 )
 
 from custom_components.msunpv.const import DOMAIN
-
-from .entity import MsunPVEntity
+from custom_components.msunpv.entity import MsunPVEntity
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
@@ -104,7 +103,6 @@ class MsunPVBinarySensor(MsunPVEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return true if the binary_sensor is on."""
-        if self.coordinator.data:
-            val: bool = self.coordinator.data.get(self.entity_description.key) != 0
-            return val
-        return False
+        data = self.coordinator.data or {}
+        key = self.entity_description.key
+        return data.get(key, False)

@@ -17,6 +17,8 @@ from homeassistant.components.sensor import (  # pyright: ignore[reportMissingIm
 )
 from homeassistant.const import UnitOfEnergy, UnitOfPower, UnitOfTemperature
 
+from custom_components.msunpv.entity import MsunPVEntity
+
 from .const import (
     CONF_MSUNPV_TYPE,
     CONF_SONDES_COMP,
@@ -25,7 +27,6 @@ from .const import (
     MSPV_2_2D,
     MSPV_4_4D,
 )
-from .entity import MsunPVEntity
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
@@ -35,7 +36,7 @@ if TYPE_CHECKING:
     from .coordinator import MSunPVDataUpdateCoordinator
 
 
-ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_2_2 = (
+ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_2_2: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="outbal",
         name="Ratio routage Ballon",
@@ -52,7 +53,7 @@ ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_2_2 = (
     ),
 )
 
-ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_4_4 = (
+ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_4_4: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="outbal",
         name="Puissance routage Ballon",
@@ -91,7 +92,7 @@ ENTITY_DESCRIPTIONS_SPECIFIQUE_MSPV_4_4 = (
     ),
 )
 
-ENTITY_DESCRIPTIONS = (
+ENTITY_DESCRIPTIONS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="powreso",
         name="Puissance Réseau",
@@ -253,7 +254,7 @@ ENTITY_DESCRIPTIONS = (
     ),
 )
 
-ENTITY_DESCRIPTIONS_COMP = (
+ENTITY_DESCRIPTIONS_COMP: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="sonde_8",
         name="Sonde08",
@@ -319,7 +320,7 @@ async def async_setup_entry(
         # entry.runtime_data.sondes_comp,
     )
 
-    list_ent = ENTITY_DESCRIPTIONS
+    list_ent: list[SensorEntityDescription] = list(ENTITY_DESCRIPTIONS)
 
     if type_router == MSPV_4_4D:
         LOGGER.debug("Pour mspv 4x4")

@@ -24,6 +24,7 @@ PLATFORMS: list[Platform] = [
     Platform.SENSOR,
     Platform.BINARY_SENSOR,
     Platform.SWITCH,
+    Platform.SELECT,
 ]
 
 
@@ -49,11 +50,10 @@ async def async_setup_entry(
     # Propage le configEntry à toutes les plateformes déclarées dans l'intégration.
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    # Subscrib to unload event
+    # Recharge automatiquement l'entrée si les options changent
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
     LOGGER.info("MSunPV Integration successfully initialized")
-
     return True
 
 
@@ -61,14 +61,18 @@ async def async_unload_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
 ) -> bool:
-    """Handle removal of an entry."""
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    """Décharge l'entrée de configuration."""
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id)
+    return unload_ok
 
 
 async def async_reload_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
 ) -> None:
-    """Reload config entry."""
-    await async_unload_entry(hass, entry)
-    await async_setup_entry(hass, entry)
+    """Recharge l'entrée quand les options sont modifiées dans l'UI."""
+    # await async_unload_entry(hass, entry)
+    # await async_setup_entry(hass, entry)
+    await hass.config_entries.async_reload(entry.entry_id)

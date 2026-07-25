@@ -11,7 +11,7 @@
     "portsAttributes": {
         "8123": {
             "label": "Home Assistant UI",
-            "onAutoForward": "openBrowser"
+            "onAutoForward": "notify"
         }
     },
     "customizations": {
@@ -47,7 +47,7 @@
                 "terminal.integrated.defaultProfile.linux": "bash",
 
                 "python.formatting.provider": "black",
-                "editor.formatOnPaste": false,
+                "editor.formatOnPaste": true,
                 "editor.formatOnSave": true,
                 "editor.formatOnType": true,
                 "files.trimTrailingWhitespace": true,
@@ -62,7 +62,12 @@
                 "python.analysis.autoImportCompletions": true,
                 "python.defaultInterpreterPath": "/usr/local/bin/python",
                 "[python]": {
-                    "editor.defaultFormatter": "charliermarsh.ruff"
+                    "editor.formatOnSave": true,
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll.ruff": "explicit",
+                        "source.organizeImports.ruff": "explicit"
+                    }
                 },
                 "homeassistant.ignoreCertificates": true
             }

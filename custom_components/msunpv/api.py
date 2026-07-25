@@ -2,20 +2,82 @@
 
 from __future__ import annotations
 
+import logging
 import socket
-from dataclasses import dataclass
 from typing import Any
 
 import aiohttp
 import async_timeout
 import xmltodict
 
-from .const import LOGGER, MSPV_2_2D, MSPV_4_4D
+from .const import (
+    CMD_AUTO_BAL,
+    CMD_AUTO_RAD,
+    CMD_MANU_BAL,
+    CMD_MANU_RAD,
+    CMD_TEST_ROUTEUR_FORT,
+    CMD_TEST_ROUTEUR_INJECTION,
+    CMD_TEST_ROUTEUR_MOYEN,
+    CMD_TEST_ROUTEUR_ZERO,
+    DECOD_OPTION_ALL,
+    DECOD_OPTION_CMDPOS,
+    DECOD_OPTION_CPTVALS,
+    DECOD_OPTION_INANS,
+    DECOD_OPTION_PARAMSYS,
+    MSPV_2_2D,
+    MSPV_4_4D,
+    MSPV_AUTOBAL,
+    MSPV_AUTORAD,
+    MSPV_CHOUTVALS,
+    MSPV_CONSOMMATION_BALLON_JOUR,
+    MSPV_CONSOMMATION_GLOBALE,
+    MSPV_CONSOMMATION_JOUR,
+    MSPV_CONSOMMATION_RADIATEUR_JOUR,
+    MSPV_DATE,
+    MSPV_FWROUT,
+    MSPV_FWWIFI,
+    MSPV_INJECTION_JOUR,
+    MSPV_MANUBAL,
+    MSPV_MANURAD,
+    MSPV_MODELE,
+    MSPV_OUTBAL,
+    MSPV_OUTRAD,
+    MSPV_OUTSTATS,
+    MSPV_POWPV,
+    MSPV_POWPV_CONS,
+    MSPV_POWPV_INJ,
+    MSPV_POWRESO,
+    MSPV_PRODUCTION_CUMUL,
+    MSPV_PRODUCTION_JOUR,
+    MSPV_PRODUCTION_JOUR_CONS,
+    MSPV_RSSI,
+    MSPV_SERNUM,
+    MSPV_SONDE_9,
+    MSPV_SONDE_10,
+    MSPV_SONDE_11,
+    MSPV_SONDE_12,
+    MSPV_SONDE_13,
+    MSPV_SONDE_14,
+    MSPV_SONDE_15,
+    MSPV_SONDE_16,
+    MSPV_SURVMM,
+    MSPV_TAMB,
+    MSPV_TBAL,
+    MSPV_TEST_ROUTEUR,
+    MSPV_TEST_ROUTEUR_OPTIONS,
+    MSPV_TIME,
+    MSPV_TSDB,
+    MSPV_VERSION,
+)
+
+_LOGGER = logging.getLogger(__name__)
+
 
 INANS_NBVAL = 16
 PARAMSYS_NBVAL = 10
 CPTVALS_NBVAL = 4
 CPTVALS_NBVAL_4_4D = 6
+CMDPOS_NBVAL = 8
 
 
 class MsunPVApiClientError(Exception):
@@ -38,9 +100,7 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
     """Verify that the response is valid."""
     if response.status in (401, 403):
         msg = "Invalid credentials"
-        raise MsunPVApiClientAuthenticationError(
-            msg,
-        )
+        raise MsunPVApiClientAuthenticationError(msg)
     response.raise_for_status()
 
 
@@ -53,131 +113,69 @@ def _hextoint(val: str) -> int:
     return uintval
 
 
-@dataclass
-class MSunPVApiData:
-    """Class pour mémorisé les données du MSunPV."""
+class MsunPVApiClient:
+    """Sample API Client."""
 
-    # Le type du routeur 2x2, 4x4, saisi à la config
+    _base_url: str
     _router_type: str
     _sondes_comp: bool
+    _session: aiohttp.ClientSession
+    _attributes: dict[str, Any]
 
-    """Les mesures et sondes."""
-    powreso: float
-    powpv: float
-    outbal: float
-    outrad: float
-    tbal: float
-    tsdb: float
-    tamb: float
-
-    powpv_inj: float
-    powpv_cons: float
-
-    """Les cumuls journaliers et globaux"""
-    consommation_jour: float  # Consommation réseau journalière
-    injection_jour: float  # Injection réseau journalière
-    production_jour: float  # Production solaire journalière brute = PV
-    production_jour_cons: (
-        float  # Production solaire journaliere consommée = PV - injection
-    )
-    consommation_globale: (
-        float  # Consomation totale journaliere = conso reseau + PV - injection
-    )
-
-    conso_ballon_jour: float  # Consommation cumulus journalière (Msunpv 4x4)
-    conso_radiateur_jour: float  # Consommation radiateur journalière (Msunpv 4x4)
-
-    consommation_reseau_cumul: float
-    injection_reseau_cumul: float
-    production_cumul: float
-
-    """Les param sys"""
-    date: str
-    time: str
-    modele: str
-    version: str
-    sernum: str
-    fwrout: str
-    fwwifi: str
-
-    """Les surveillance"""
-    survmm: str
-
-    """Les commandes"""
-    cmdpos: str
-
-    manubal: bool
-    autobal: bool
-    manurad: bool
-    autorad: bool
-
-    etat_test_routeur_inject: bool
-    etat_test_routeur_zero: bool
-    etat_test_routeur_moyen: bool
-    etat_test_routeur_fort: bool
-
-    """Les etats des sorties"""
-    outstats: str
-
-    """Les valeurs calculées en sortie des modules chauffage """
-    choutvals: str
-
-    sonde_8: float = 0
-    sonde_9: float = 0
-    sonde_10: float = 0
-    sonde_11: float = 0
-    sonde_12: float = 0
-    sonde_13: float = 0
-    sonde_14: float = 0
-    sonde_15: float = 0
-    rssi: int = 0
-
-    def __xxxstr__(self) -> str:
-        """Printable str of object."""
-        vars(self)
-        _aaa: str = ""
-        for attr in dir(vars):
-            _aaa += attr + ": " + getattr(self, attr)
-
-        return _aaa
+    def __init__(
+        self,
+        url: str,
+        router_type: str,
+        sondes_comp: bool,  # noqa: FBT001
+        session: aiohttp.ClientSession,
+    ) -> None:
+        """Init MSunPV API Client."""
+        self._base_url: str = url
+        self._router_type: str = router_type
+        self._sondes_comp: bool = sondes_comp
+        self._session: aiohttp.ClientSession = session
+        self._attributes = {}
 
     def _decode_inans(self, doc: dict[str, Any]) -> None:
         # InAns - Valeurs des 16 sondes
         # <inAns>1157,6;1,0; 0; 0;215,0;61,8;0,0;0,0; 0; 0; 0; 0; 0; 0; 0; 0;</inAns>
         inans: str = doc["xml"]["inAns"]
         vals = inans.replace(",", ".").split(";")
-        if len(vals) != INANS_NBVAL:
-            msg = f"InAns - Nombre de sondes incorrect: {len(vals)}"
+        if len(vals) < INANS_NBVAL:
+            msg = f"InAns - Nombre de sondes incorrect: {len(vals)}, vals= {vals}"
             raise ValueError(msg)
 
-        self.powreso = float(vals[0])
-        self.powpv = 0.0 - float(vals[1])  # inverse pour l'avoir en positif
+        self._attributes[MSPV_POWRESO] = float(vals[0])
+        self._attributes[MSPV_POWPV] = -float(
+            vals[1]
+        )  # inverse pour l'avoir en positif
 
         # Valeurs fonction du type du routeur
         if self._router_type == MSPV_4_4D:
-            LOGGER.debug("Décode sondes pour MSPV 4x4")
-            self.outbal = float(vals[2])  # Puissance en W
-            self.outrad = float(vals[3])  # Puissance en W
+            self._attributes[MSPV_OUTBAL] = float(vals[2])  # Puissance en W
+            self._attributes[MSPV_OUTRAD] = float(vals[3])  # Puissance en W
         elif self._router_type == MSPV_2_2D:
-            LOGGER.debug("Décode sondes pour MSPV 2x2")
-            self.outbal = round(float(vals[2]) / 4)  # (0-400) -> (0-100%)
-            self.outrad = round(float(vals[3]) / 4)  # (0-400) -> (0-100%)
+            self._attributes[MSPV_OUTBAL] = round(
+                float(vals[2]) / 4
+            )  # (0-400) -> (0-100%)
+            self._attributes[MSPV_OUTRAD] = round(
+                float(vals[3]) / 4
+            )  # (0-400) -> (0-100%)
 
-        self.tbal = float(vals[5])
-        self.tsdb = float(vals[6])
-        self.tamb = float(vals[7])
+        self._attributes[MSPV_TBAL] = float(vals[5])
+        self._attributes[MSPV_TSDB] = float(vals[6])
+        self._attributes[MSPV_TAMB] = float(vals[7])
 
         # Sondes complémentaires génériques
         if self._sondes_comp:
-            LOGGER.debug("Décode sondes complementaires")
-            self.sonde_8 = float(vals[8])
-            self.sonde_9 = float(vals[9])
-            self.sonde_10 = float(vals[10])
-            self.sonde_11 = float(vals[11])
-            self.sonde_12 = float(vals[12])
-            self.sonde_13 = float(vals[13])
-            self.sonde_14 = float(vals[14])
-            self.sonde_15 = float(vals[15])
+            self._attributes[MSPV_SONDE_9] = float(vals[8])
+            self._attributes[MSPV_SONDE_10] = float(vals[9])
+            self._attributes[MSPV_SONDE_11] = float(vals[10])
+            self._attributes[MSPV_SONDE_12] = float(vals[11])
+            self._attributes[MSPV_SONDE_13] = float(vals[12])
+            self._attributes[MSPV_SONDE_14] = float(vals[13])
+            self._attributes[MSPV_SONDE_15] = float(vals[14])
+            self._attributes[MSPV_SONDE_16] = float(vals[15])
 
     def _decode_paramsys(self, doc: dict[str, Any]) -> None:
         # paramSys -
@@ -190,32 +188,34 @@ class MSunPVApiData:
         if len(vals) < PARAMSYS_NBVAL:
             msg = f"paramSys - Nombre de paramètres système incorrect: {len(vals)}"
             raise ValueError(msg)
-
-        self.time = vals[0]
-        self.date = vals[1]
-        self.modele = vals[5]  # modele du routeur ("MS_PV2_2d", "MS_PV4_4d")
-        self.version = vals[6]  # version projet
-        self.sernum = vals[7]  # Numero de serie
-        self.fwwifi = vals[8]  # Firmware wifi
-        self.fwrout = vals[9]  # Firmware routeur
+        self._attributes[MSPV_TIME] = vals[0]
+        self._attributes[MSPV_DATE] = vals[1]
+        self._attributes[MSPV_MODELE] = vals[5]  # modele du routeur
+        self._attributes[MSPV_VERSION] = vals[6]  # version projet
+        self._attributes[MSPV_SERNUM] = vals[7]  # Numero de serie
+        self._attributes[MSPV_FWWIFI] = vals[8]  # Firmware wifi
+        self._attributes[MSPV_FWROUT] = vals[9]  # Firmware routeur
 
     def _decode_cmdpos(self, doc: dict[str, Any]) -> None:
         # L'état des 8 commandes, en binaire sur 4 bits
         # <cmdPos>a;0;0;0;0;0;0;2;</cmdPos>
         cmdpos = doc["xml"]["cmdPos"]
-        self.cmdpos = cmdpos
+        vals = cmdpos.split(";")
+        if len(vals) < CMDPOS_NBVAL:
+            msg = f"cmdPos - Nombre de commandes incorrect: {len(vals)}"
+            raise ValueError(msg)
 
-        val = int(cmdpos.split(";")[0], 16)
-        self.manubal = (val & 0x01) != 0
-        self.autobal = (val & 0x02) != 0
-        self.manurad = (val & 0x04) != 0
-        self.autorad = (val & 0x08) != 0
+        val = int(vals[0], 16)
+        self._attributes[MSPV_MANUBAL] = bool((val & 0x01) != 0)
+        self._attributes[MSPV_AUTOBAL] = bool((val & 0x02) != 0)
+        self._attributes[MSPV_MANURAD] = bool((val & 0x04) != 0)
+        self._attributes[MSPV_AUTORAD] = bool((val & 0x08) != 0)
 
-        val = int(cmdpos.split(";")[7], 16)
-        self.etat_test_routeur_inject = (val & 0x01) != 0
-        self.etat_test_routeur_zero = (val & 0x02) != 0
-        self.etat_test_routeur_moyen = (val & 0x04) != 0
-        self.etat_test_routeur_fort = (val & 0x08) != 0
+        val = int(vals[7], 16)
+        if val in MSPV_TEST_ROUTEUR_OPTIONS:
+            self._attributes[MSPV_TEST_ROUTEUR] = MSPV_TEST_ROUTEUR_OPTIONS[val]
+        else:
+            self._attributes[MSPV_TEST_ROUTEUR] = "undef"
 
     def _decode_cptvals(self, doc: dict[str, Any]) -> None:
         # Valeurs des 8 compteurs en hexadécimal
@@ -226,17 +226,19 @@ class MSunPVApiData:
             msg = f"cptVals - Nombre de compteurs incorrect: {len(vals)}"
             raise ValueError(msg)
 
-        self.consommation_jour = (
-            float(_hextoint("00" + vals[0]))  # pad 0 à gauche, car toujourS positif
+        self._attributes[MSPV_CONSOMMATION_JOUR] = (
+            float(
+                _hextoint("00" + vals[0])
+            )  # pad 0 à gauche,.update({ car toujourS positif
             / 10000.0  # de dixième de Wh, en kWh
         )
-        self.injection_jour = (
+        self._attributes[MSPV_INJECTION_JOUR] = (
             float(_hextoint(vals[1])) / -10000.0  # de dixième de Wh, en kWh positif
         )
-        self.production_jour = (
+        self._attributes[MSPV_PRODUCTION_JOUR] = (
             float(_hextoint(vals[2])) / -10000.0  # de dixième de Wh, en kWh positif
         )
-        self.production_cumul = (
+        self._attributes[MSPV_PRODUCTION_CUMUL] = (
             float(_hextoint(vals[3])) / -10.0  # de dixième de kWh, en kWh positif
         )
 
@@ -247,118 +249,82 @@ class MSunPVApiData:
                 raise ValueError(msg)
 
             # Consommation cumulus journalière
-            self.conso_ballon_jour = (
+            self._attributes[MSPV_CONSOMMATION_BALLON_JOUR] = (
                 float(_hextoint(vals[4])) / 10000.0  # de dixième de Wh, en kWh positif
             )
             # Consommation radiateur journalière
-            self.conso_radiateur_jour = (
+            self._attributes[MSPV_CONSOMMATION_RADIATEUR_JOUR] = (
                 float(_hextoint(vals[5])) / 10000.0  # de dixième de Wh, en kWh positif
             )
 
-    def get(self, attribute: str) -> Any:
-        """Getter of attributes."""
-        return getattr(self, attribute)
-
-    def __init__(self, router_type: str, sondes_comp: bool, payload: str) -> None:  # noqa: FBT001
-        """Init a partir des donnée XML reçues."""
-        self._router_type = router_type
-        self._sondes_comp = sondes_comp
-        LOGGER.debug(
-            "INIT MSunPVApiData - router_type= '%s', sondes_comp= '%r'",
-            router_type,
-            sondes_comp,
-        )
-
+    def decode_status(
+        self,
+        payload: str,
+        decod_option: int,
+    ) -> None:
+        """Decode data of status.xml."""
+        _LOGGER.debug("decode_status - payload= %s", payload)
         doc = xmltodict.parse(payload)
-        LOGGER.debug("doc keys= %s", str(doc["xml"].keys()))
 
-        self._decode_inans(doc)
-        self._decode_paramsys(doc)
-        self._decode_cmdpos(doc)
-        self._decode_cptvals(doc)
+        ## ----
+        if decod_option & DECOD_OPTION_INANS:
+            self._decode_inans(doc)
+        if decod_option & DECOD_OPTION_PARAMSYS:
+            self._decode_paramsys(doc)
+        if decod_option & DECOD_OPTION_CMDPOS:
+            self._decode_cmdpos(doc)
+        if decod_option & DECOD_OPTION_CPTVALS:
+            self._decode_cptvals(doc)
 
-        if "rssi" in doc["xml"]:  # pas transmis sur les anciens routeurs (v<104)
-            self.rssi = doc["xml"]["rssi"].split(";")[1]
-        else:
-            self.rssi = 0
+        # pas transmis sur les anciens routeurs (v<104)
+        rssi = doc["xml"]["rssi"].split(";")[1] if "rssi" in doc["xml"] else 0
+        self._attributes[MSPV_RSSI] = rssi
 
         # Surveillance des sondes:
+        # <survMm>0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;</survMm>
         #   0 pas de dépassement,
         #   1 dépassement maxi,
         #   2 dépassement mini ou sonde déconnectée
-        # <survMm>0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;</survMm>
         survmm = doc["xml"]["survMm"]
-        self.survmm = survmm
+        self._attributes[MSPV_SURVMM] = survmm
 
         # Valeurs des 16 sorties de 0 à 100%
         # <outStat>0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;</outStat>
         outstat = doc["xml"]["outStat"]
-        self.outstats = outstat
+        self._attributes[MSPV_OUTSTATS] = outstat
 
-        # Valeurs calculées
-        self.production_jour_cons = self.production_jour - self.injection_jour
-        self.consommation_globale = self.consommation_jour + self.production_jour_cons
-        self.powpv_inj = (
-            -self.powreso if (self.powpv >= 0.0 and self.powreso <= 0.0) else 0
-        )
-        self.powpv_cons = self.powpv - self.powpv_inj
+        # Valeurs calculées-e
+        prod_j: float = self._attributes[MSPV_PRODUCTION_JOUR]
+        inj_j: float = float(self._attributes[MSPV_INJECTION_JOUR])
+        self._attributes[MSPV_PRODUCTION_JOUR_CONS] = prod_j - inj_j
+        conso_j: float = self._attributes[MSPV_CONSOMMATION_JOUR]
+        self._attributes[MSPV_CONSOMMATION_GLOBALE] = conso_j + prod_j - inj_j
+
+        powreso = self._attributes[MSPV_POWRESO]
+        powpv = self._attributes[MSPV_POWPV]
+        powpv_inj = -powreso if (powpv >= 0.0 and powreso <= 0.0) else 0
+        self._attributes[MSPV_POWPV_INJ] = powpv_inj
+        self._attributes[MSPV_POWPV_CONS] = powpv - powpv_inj
 
         choutval = doc["xml"]["chOutVal"]
-        self.choutvals = choutval
+        self._attributes[MSPV_CHOUTVALS] = choutval
 
-
-class MsunPVApiClient:
-    """Sample API Client."""
-
-    _base_url: str
-    _router_type: str
-    _sondes_comp: bool
-    _session: aiohttp.ClientSession
-
-    def __init__(
-        self,
-        url: str,
-        router_type: str,
-        sondes_comp: bool,  # noqa: FBT001
-        session: aiohttp.ClientSession,
-    ) -> None:
-        """Sample API Client."""
-        self._base_url = url
-        self._router_type = router_type
-        self._sondes_comp = sondes_comp
-        self._session = session
-
-    async def async_get_data(self) -> MSunPVApiData:
-        """Get data from the API."""
-        return await self._api_wrapper(
-            method="get",
-            url=self._base_url + "/status.xml",
-        )
-
-    async def _api_wrapper(
-        self,
-        method: str,
-        url: str,
-        data: dict | None = None,
-        headers: dict | None = None,
-    ) -> MSunPVApiData:
-        """Get information from the API."""
+    async def async_get_status_xml_data(self) -> dict[str, Any]:
+        """Get router data from status.xml."""
         try:
             async with async_timeout.timeout(10):
                 response = await self._session.request(
-                    method=method,
-                    url=url,
-                    headers=headers,
-                    json=data,
+                    method="get",
+                    url=self._base_url + "/status.xml",
                 )
                 _verify_response_or_raise(response)
 
                 payload: str = await response.text()
-                return MSunPVApiData(
-                    router_type=self._router_type,
-                    sondes_comp=self._sondes_comp,
+                self.decode_status(
                     payload=payload,
+                    decod_option=DECOD_OPTION_ALL,
                 )
+                return self._attributes
 
         except TimeoutError as exception:
             msg = f"Timeout error fetching information - {exception}"
@@ -375,3 +341,169 @@ class MsunPVApiClient:
             raise MsunPVApiClientError(
                 msg,
             ) from exception
+
+    ##-----------------------------------------------
+
+    async def async_set_command(self, cmd_num: int, mask1: int, mask2: int = 0) -> None:
+        """Send command to router by the API."""
+        _LOGGER.debug("async_set_command - %d, %d, %d", cmd_num, mask1, mask2)
+
+        try:
+            # Lecture de l'etat courant des commandes
+            async with async_timeout.timeout(10):
+                response = await self._session.request(
+                    method="get",
+                    url=self._base_url + "/status.xml",
+                )
+                _verify_response_or_raise(response)
+
+                payload: str = await response.text()
+
+        except TimeoutError as exception:
+            msg = f"Timeout error fetching information - {exception}"
+            raise MsunPVApiClientCommunicationError(
+                msg,
+            ) from exception
+        except (aiohttp.ClientError, socket.gaierror) as exception:
+            msg = f"Error fetching information - {exception}"
+            raise MsunPVApiClientCommunicationError(
+                msg,
+            ) from exception
+        except Exception as exception:  # pylint: disable=broad-except
+            msg = f"Something really wrong happened! - {exception}"
+            raise MsunPVApiClientError(
+                msg,
+            ) from exception
+
+        doc = xmltodict.parse(payload)
+
+        # L'état des 8 commandes, en binaire sur 4 bits
+        # <cmdPos>a;0;0;0;0;0;0;2;</cmdPos>
+        cmdpos: str = doc["xml"]["cmdPos"]
+        _LOGGER.debug("async_set_command - cmdPos= [%s]", cmdpos)
+        cmdpos = cmdpos.strip()
+        vals: list[str] = cmdpos.split(";")
+        if len(vals) < CMDPOS_NBVAL:
+            msg = f"cmdPos - Nombre de valeurs incorrect: {len(vals)}"
+            raise ValueError(msg)
+
+        # Construction de la commande
+        buff: str = ""
+        for ii, val in enumerate(vals):
+            if ii < CMDPOS_NBVAL:
+                newval: str = (
+                    str((int(val, 16) & mask1) | mask2)
+                    if ii == cmd_num
+                    else str(int(val, 16))
+                )
+                buff += f"{newval};"
+
+        # Envoi de la commande
+        try:
+            _LOGGER.debug("async_set_command - parS=%s", buff)
+
+            # Urlencoded data
+            form_data = aiohttp.FormData()
+            form_data.add_field("parS", buff)
+            _LOGGER.debug("async_set_command - urlencoded : [%s]", form_data)
+
+            response: aiohttp.ClientResponse = await self._session.request(
+                method="post",
+                url=self._base_url + "/index.xml",
+                data=form_data,
+            )
+            _verify_response_or_raise(response)
+            payload: str = await response.text("ISO-8859-1")
+            _LOGGER.debug("post - status= %d, response= %s", response.status, payload)
+
+        except TimeoutError as exception:
+            msg = f"Timeout error fetching information - {exception}"
+            raise MsunPVApiClientCommunicationError(
+                msg,
+            ) from exception
+        except (aiohttp.ClientError, socket.gaierror) as exception:
+            msg = f"Error fetching information - {exception}"
+            raise MsunPVApiClientCommunicationError(
+                msg,
+            ) from exception
+        except Exception as exception:  # pylint: disable=broad-except
+            msg = f"Something really wrong happened! - {exception}"
+            raise MsunPVApiClientError(
+                msg,
+            ) from exception
+
+    async def async_set_manu_bal_on(self) -> None:
+        """Set manu Bal on."""
+        await self.async_set_command(
+            cmd_num=CMD_MANU_BAL[0], mask1=CMD_MANU_BAL[1], mask2=CMD_MANU_BAL[2]
+        )
+
+    async def async_set_manu_bal_off(self) -> None:
+        """Set manu bal off."""
+        await self.async_set_command(cmd_num=CMD_MANU_BAL[0], mask1=CMD_MANU_BAL[1])
+
+    async def async_set_auto_bal_on(self) -> None:
+        """Set auto bal on."""
+        await self.async_set_command(
+            cmd_num=CMD_AUTO_BAL[0], mask1=CMD_AUTO_BAL[1], mask2=CMD_AUTO_BAL[2]
+        )
+
+    async def async_set_auto_bal_off(self) -> None:
+        """Set auto bal off."""
+        await self.async_set_command(cmd_num=CMD_AUTO_BAL[0], mask1=CMD_AUTO_BAL[1])
+
+    async def async_set_manu_rad_on(self) -> None:
+        """Set manu rad on."""
+        await self.async_set_command(
+            cmd_num=CMD_MANU_RAD[0], mask1=CMD_MANU_RAD[1], mask2=CMD_MANU_RAD[2]
+        )
+
+    async def async_set_manu_rad_off(self) -> None:
+        """Set manu rad off."""
+        await self.async_set_command(cmd_num=CMD_MANU_RAD[0], mask1=CMD_MANU_RAD[1])
+
+    async def async_set_auto_rad_on(self) -> None:
+        """Set auto rad on."""
+        await self.async_set_command(
+            cmd_num=CMD_AUTO_RAD[0], mask1=CMD_AUTO_RAD[1], mask2=CMD_AUTO_RAD[2]
+        )
+
+    async def async_set_auto_rad_off(self) -> None:
+        """Set auto rad off."""
+        await self.async_set_command(cmd_num=CMD_AUTO_RAD[0], mask1=CMD_AUTO_RAD[1])
+
+    async def async_set_test_routeur_inject(self) -> None:
+        """Set test routeur to inject."""
+        _LOGGER.debug("set_test_routeur_inject")
+        await self.async_set_command(
+            cmd_num=CMD_TEST_ROUTEUR_INJECTION[0],
+            mask1=CMD_TEST_ROUTEUR_INJECTION[1],
+            mask2=CMD_TEST_ROUTEUR_INJECTION[2],
+        )
+
+    async def async_set_test_routeur_zero(self) -> None:
+        """Set test routeur inject to zero."""
+        _LOGGER.debug("set_test_routeur_zero")
+        await self.async_set_command(
+            cmd_num=CMD_TEST_ROUTEUR_ZERO[0],
+            mask1=CMD_TEST_ROUTEUR_ZERO[1],
+            mask2=CMD_TEST_ROUTEUR_ZERO[2],
+        )
+
+    async def async_set_test_routeur_moyen(self) -> None:
+        """Set test routeur inject to moyen."""
+        _LOGGER.debug("set_test_routeur_moyen")
+        await self.async_set_command(
+            cmd_num=CMD_TEST_ROUTEUR_MOYEN[0],
+            mask1=CMD_TEST_ROUTEUR_MOYEN[1],
+            mask2=CMD_TEST_ROUTEUR_MOYEN[2],
+        )
+
+    async def async_set_test_routeur_fort(self) -> None:
+        """Set test routeur inject to fort."""
+        _LOGGER.debug("set_test_routeur_fort")
+        await self.async_set_command(
+            cmd_num=CMD_TEST_ROUTEUR_FORT[0],
+            mask1=CMD_TEST_ROUTEUR_FORT[1],
+            mask2=CMD_TEST_ROUTEUR_FORT[2],
+        )

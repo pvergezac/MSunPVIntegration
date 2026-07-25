@@ -1,24 +1,38 @@
 <div align="center">
 
+![alt text](images/MSunPV_logo2.jpeg)
+
+
 # MsunPV Integration
 
-![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white)
-[![Hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
-![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)]
+![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2025.1+-blue.svg?logo=home-assistant)
+[![Hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Hassfest](https://github.com/pvergezac/msunpvintegration/actions/workflows/validate.yml/badge.svg)](https://github.com/pvergezac/msunpvintegration/actions/workflows/validate.yml)
+
+![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?logo=visual-studio-code&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?logo=python&logoColor=ffdd54)
+
 
 [![GitHub release](https://img.shields.io/github/release/pvergezac/msunpvintegration.svg)](https://GitHub.com/pvergezac/msunpvintegration/releases/)
-![GitHub Release Date](https://img.shields.io/github/release-date/pvergezac/MSunPVIntegration)
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/pvergezac/MSunPVIntegration/total)
+![GitHub Release Date](https://img.shields.io/github/release-date/pvergezac/msunpvintegration.svg?color=blue)
+[![Github All Releases](https://img.shields.io/github/downloads/pvergezac/msunpvintegration/total.svg?color=blue&style=flat-square)]()
+[![GitHub forks](https://img.shields.io/github/forks/pvergezac/msunpvintegration?style=flat-square)](https://GitHub.com/pvergezac/msunpvintegration/network/)
+![GitHub Repo stars](https://img.shields.io/github/stars/pvergezac/msunpvintegration?style=flat-square)
 
-[![GitHub license](https://badgen.net/github/license/pvergezac/msunpvintegration)](https://github.com/pvergezac/msunpvintegration/blob/master/LICENSE)
-[![GitHub forks](https://badgen.net/github/forks/pvergezac/msunpvintegration/)](https://GitHub.com/pvergezac/msunpvintegration/network/)
-[![GitHub stars](https://badgen.net/github/stars/pvergezac/msunpvintegration)](https://GitHub.com/pvergezac/msunpvintegration/stargazers/)
 
-- [[Documentation]](https://github.com/pvergezac/MSunPVIntegration/blob/main/DOCUMENTATION/Documentation.md)
-- [[Issues]](https://github.com/pvergezac/MSunPVIntegration/issues)
-- [**MSunPV Integration** on Home Assistant Community](https://community.home-assistant.io/t/msunpv-solar-router-integration/862047)
-- [**MSunPV Integration**  sur le Forum Ard-Tek](https://ard-tek.com/index.php/forum/bienvenue/2747-home-assistant-integration-msunpv-hacs)
+
+
+
+[Documentation](https://github.com/pvergezac/MSunPVIntegration/blob/main/DOCUMENTATION/Documentation.md)
+
+[Issues](https://github.com/pvergezac/MSunPVIntegration/issues)
+
+
+[![Static Badge](https://img.shields.io/badge/Forum-blue?label=Home%20assistant)](https://community.home-assistant.io/t/msunpv-solar-router-integration/862047)
+[![Static Badge](https://img.shields.io/badge/Forum-blue?label=Ard-Tek)](https://ard-tek.com/index.php/forum/bienvenue/2747-home-assistant-integration-msunpv-hacs)
+[![Static Badge](https://img.shields.io/badge/Forum-blue?label=forum-photovoltaique.fr)](https://ard-tek.com/index.php/forum/bienvenue/2747-home-assistant-integration-msunpv-hacs)
+
 
 
 </div>
@@ -27,7 +41,7 @@
 
 **MsunPV Integration** est une intégration personnalisée pour **Home Assistant** qui permet le suivi des mesures du routeur solaire **MSunPV** de [**Ard-Tek**](https://ard-tek.com).
 
-L'intégration permet de suivre des mesures :
+L'intégration permet de suivre les mesures :
 - Production instantanée des panneaux solaire
 - Consommation ou injection instantanée sur le réseau électrique
 - Taux de routage vers le ballon d'eau chaude
@@ -39,16 +53,19 @@ L'intégration permet de suivre des mesures :
 - Infos routeur (modèle, version, config, etc.)
 - Installation et mises à jour via HACS, et l'interface graphique de HA
 
-Le choix à été fait de transformer les valeurs du MSunPV en valeur positives (sauf puissance réseau, négative en cas d'injection).
-Il semble plus logique de voir une courbe montante quand le production PV augmente. C'est également plus simple d'alimenter le Dashboard Energie de Home Assistant avec ces valeurs. (On pourra si nécessaire, doubler certaines entités pour avoir aussi les valeur en négatif comme sur le routeur).
+L'intégration permet également de piloter :
+ - les commandes Manu/Auto (ballon & radiateur)
+ - la commande TestRouteur (Inject, Zéro, Moyen, Fort)
 
-Les développements et tests ont été réalisés sur un routeur MSunPV MS_PV2_2d, V5.0.1, Fw Wifi 104b, Fw Routeur 104b, en configuration d'origine.
+>Le choix à été fait de transformer les valeurs du MSunPV en valeur positives (sauf puissance réseau, négative en cas d'injection).
+Il semble plus logique de voir une courbe montante quand le production PV augmente. C'est également plus simple d'alimenter le Dashboard Energie de Home Assistant avec ces valeurs. (On pourra si nécessaire, doubler certaines entités pour avoir aussi les valeurs en négatif comme sur le routeur).
+
+Les développements et les tests ont été réalisés sur un routeur MSunPV MS_PV2_2d, V5.0.1, Fw Wifi 104b, Fw Routeur 104b, en configuration d'origine.
 
 ### Fonctionnalités à venir (TODO List)
 
-- État et pilotage des commandes Manu/Auto (ballon & radiateur)
-- État et pilotage des commandes TestRouteur (Inject, Zéro, Moyen, Fort)
 - État et pilotage des consignes de température (ballon & radiateur)
+- État et pilotage de la consigne d'injection (pour le mode TestRouteur == Inject)
 - Automatisations
 
 L'idée est de pouvoir agir sur le routage depuis HA, pour par exemple intégrer les prévisions de production du lendemain, ou prioriser la production d'eau chade par rapport à la filtration d'un piscine, ou encore tenir compte de la couleur du jour de TEMPO.
@@ -140,7 +157,7 @@ This repository contains multiple files, here is a overview:
 1. Open this repository in **Visual Studio Code** devcontainer (Preferably with the "`Dev Containers: Clone Repository in Named Container Volume...`" option).
 1. Run the `scripts/develop` to start HA and test out this integration.
 
-# 🤝 Contribution
+## 🤝 Contribution
 
 Les contributions sont les bienvenues ! Pour signaler un bug ou proposer une amélioration, ouvrez une [issue](https://github.com/pvergezac/SmartPoolFiltraMSunPVIntegrationtionManager/issues) sur GitHub.
 
@@ -153,8 +170,11 @@ Ce projet est distribué sous licence MIT. Voir le fichier [LICENSE](LICENSE) po
 ---
 
 <div align="center">
-Fait avec ❤️ pour la communauté Home Assistant francophone
+Fait avec ❤️ pour la communauté Home Assistant francophone,
 
-Si vous aimez ce projet, ajouter une ⭐ étoile sur [Github](https://github.com/pvergezac/![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/pvergezac/MSunPVIntegration/total)
-)
+et celle des utilisateurs du routeur **MSunPV** de [**Ard-Tek**](https://ard-tek.com)
+
+
+Si vous aimez ce projet, ajouter une ⭐ étoile sur [Github](https://github.com/pvergezac/MSunPVIntegration)
+
 </div>

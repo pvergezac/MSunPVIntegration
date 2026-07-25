@@ -17,12 +17,19 @@ from .api import (
     MsunPVApiClient,
     MsunPVApiClientAuthenticationError,
     MsunPVApiClientError,
-    MSunPVApiData,
 )
 from .const import (
     CONF_MSUNPV_TYPE,
     CONF_SONDES_COMP,
     DOMAIN,
+    MSPV_CONSOMMATION_JOUR,
+    MSPV_CONSOMMATION_RESEAU_CUMUL,
+    MSPV_FORT,
+    MSPV_INJECT,
+    MSPV_INJECTION_JOUR,
+    MSPV_INJECTION_RESEAU_CUMUL,
+    MSPV_MOYEN,
+    MSPV_ZERO,
     STORAGE_KEY,
     STORAGE_VERSION,
     UPDATE_INTERVAL_SECONDS,
@@ -42,15 +49,20 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
 
     def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry) -> None:
         """Initialize MSunPVDataUpdateCoordinator."""
+        self.hass = hass
         self.config_entry = config_entry
-        self._store = Store(hass, STORAGE_VERSION, STORAGE_KEY)
+        self.url = config_entry.data[CONF_HOST]
+        self.name = DOMAIN
+        self.router_type = config_entry.data[CONF_MSUNPV_TYPE]
+        self.with_sonde_comp: bool = str(config_entry.data[CONF_SONDES_COMP]) == "True"
+
+        self._store: Store = Store(hass, STORAGE_VERSION, STORAGE_KEY)
         self.stored_data: None | dict[str, Any] = None
-        with_sonde_comp: bool = str(config_entry.data[CONF_SONDES_COMP]) == "True"
 
         self.client = MsunPVApiClient(
-            url=config_entry.data[CONF_HOST],
-            router_type=config_entry.data[CONF_MSUNPV_TYPE],
-            sondes_comp=with_sonde_comp,
+            url=self.url,
+            router_type=self.router_type,
+            sondes_comp=self.with_sonde_comp,
             session=async_get_clientsession(hass),
         )
 
@@ -61,10 +73,11 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=UPDATE_INTERVAL_SECONDS),
         )
 
-    async def _async_update_data(self) -> Any:
+    async def _async_update_data(self) -> dict:
         """Update data via library."""
         try:
-            data: MSunPVApiData = await self.client.async_get_data()
+            # Lecture de status.xml du routeur
+            self.data = await self.client.async_get_status_xml_data()
         except MsunPVApiClientAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception
         except MsunPVApiClientError as exception:
@@ -73,23 +86,31 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
             # Gestion des cumuls
             self.stored_data = await self.async_load_state()
 
-            delta = data.consommation_jour - self.stored_data["consommation_jour"]
+            delta = (
+                self.data[MSPV_CONSOMMATION_JOUR]
+                - self.stored_data[MSPV_CONSOMMATION_JOUR]
+            )
             delta = max(delta, 0)
-            self.stored_data["consommation_jour"] = data.consommation_jour
-            self.stored_data["consommation_reseau_cumul"] += delta
-            data.consommation_reseau_cumul = self.stored_data[
-                "consommation_reseau_cumul"
+            self.stored_data[MSPV_CONSOMMATION_JOUR] = self.data[MSPV_CONSOMMATION_JOUR]
+            self.stored_data[MSPV_CONSOMMATION_RESEAU_CUMUL] += delta
+            self.data[MSPV_CONSOMMATION_RESEAU_CUMUL] = self.stored_data[
+                MSPV_CONSOMMATION_RESEAU_CUMUL
             ]
 
-            delta = data.injection_jour - self.stored_data["injection_jour"]
+            delta = (
+                self.data[MSPV_INJECTION_JOUR] - self.stored_data[MSPV_INJECTION_JOUR]
+            )
             delta = max(delta, 0)
-            self.stored_data["injection_jour"] = data.injection_jour
-            self.stored_data["injection_reseau_cumul"] += delta
-            data.injection_reseau_cumul = self.stored_data["injection_reseau_cumul"]
+            self.stored_data[MSPV_INJECTION_JOUR] = self.data[MSPV_INJECTION_JOUR]
+            self.stored_data[MSPV_INJECTION_RESEAU_CUMUL] += delta
+            self.data[MSPV_INJECTION_RESEAU_CUMUL] = self.stored_data[
+                MSPV_INJECTION_RESEAU_CUMUL
+            ]
 
+            # Mémorise les cumuls
             await self._save_state()
 
-            return data
+            return self.data
 
     async def _save_state(self) -> None:
         """Persist runtime data across HA restarts."""
@@ -105,14 +126,15 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
         if (not stored) or (stored is None) or (stored["last_reset_date"] is None):
             stored = {
                 "last_reset_date": dt_util.now().date().isoformat(),
-                "consommation_jour": 0,
-                "consommation_reseau_cumul": 0,
-                "injection_jour": 0,
-                "injection_reseau_cumul": 0,
+                MSPV_CONSOMMATION_JOUR: 0,
+                MSPV_CONSOMMATION_RESEAU_CUMUL: 0,
+                MSPV_INJECTION_JOUR: 0,
+                MSPV_INJECTION_RESEAU_CUMUL: 0,
             }
 
         today = dt_util.now().date()
-        stored_date_str = stored.get("last_reset_date")
+        stored_date_str: str | None = stored.get("last_reset_date")
+
         try:
             stored_date = (
                 date.fromisoformat(stored_date_str) if stored_date_str else None
@@ -120,9 +142,75 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
         except (ValueError, TypeError):
             stored_date = None
 
-        if stored_date == today:
-            _LOGGER.info("Restored today's runtime: ")
-        else:
+        if stored_date != today:
             _LOGGER.info("New day detected -- resetting daily counters")
+            stored = {
+                "last_reset_date": dt_util.now().date().isoformat(),
+                MSPV_CONSOMMATION_JOUR: 0,
+                MSPV_CONSOMMATION_RESEAU_CUMUL: 0,
+                MSPV_INJECTION_JOUR: 0,
+                MSPV_INJECTION_RESEAU_CUMUL: 0,
+            }
 
         return stored
+
+    async def async_set_manu_bal_on(self) -> None:
+        """Set the manual ballon switch on."""
+        _LOGGER.debug("set_manu_bal_on")
+        await self.client.async_set_manu_bal_on()
+        await self.async_request_refresh()
+
+    async def async_set_manu_bal_off(self) -> None:
+        """Set the manual ballon switch off."""
+        _LOGGER.debug("set_manu_bal_off")
+        await self.client.async_set_manu_bal_off()
+        await self.async_request_refresh()
+
+    async def async_set_auto_bal_on(self) -> None:
+        """Set the auto ballon switch on."""
+        _LOGGER.debug("set_auto_bal_on")
+        await self.client.async_set_auto_bal_on()
+        await self.async_request_refresh()
+
+    async def async_set_auto_bal_off(self) -> None:
+        """Set the auto ballon switch off."""
+        _LOGGER.debug("set_auto_bal_off")
+        await self.client.async_set_auto_bal_off()
+        await self.async_request_refresh()
+
+    async def async_set_manu_rad_on(self) -> None:
+        """Set the manual radiateur switch on."""
+        await self.client.async_set_manu_rad_on()
+        await self.async_request_refresh()
+
+    async def async_set_manu_rad_off(self) -> None:
+        """Set the manual radiateur switch off."""
+        await self.client.async_set_manu_rad_off()
+        await self.async_request_refresh()
+
+    async def async_set_auto_rad_on(self) -> None:
+        """Set the manual radiateur switch on."""
+        await self.client.async_set_auto_rad_on()
+        await self.async_request_refresh()
+
+    async def async_set_auto_rad_off(self) -> None:
+        """Set the manual radiateur switch off."""
+        await self.client.async_set_auto_rad_off()
+        await self.async_request_refresh()
+
+    async def async_set_test_routeur(self, value: str) -> None:
+        """Set the test router command."""
+        _LOGGER.debug("set_test_routeur: %s", value)
+        if value == MSPV_INJECT:
+            await self.client.async_set_test_routeur_inject()
+        elif value == MSPV_ZERO:
+            await self.client.async_set_test_routeur_zero()
+        elif value == MSPV_MOYEN:
+            await self.client.async_set_test_routeur_moyen()
+        elif value == MSPV_FORT:
+            await self.client.async_set_test_routeur_fort()
+        else:
+            msg = f"async_set_test_routeur - valeurs incorrect: {value}"
+            raise ValueError(msg)
+
+        await self.async_request_refresh()

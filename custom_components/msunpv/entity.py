@@ -23,6 +23,11 @@ class MsunPVEntity(CoordinatorEntity[MSunPVDataUpdateCoordinator]):
                 (
                     coordinator.config_entry.domain,
                     coordinator.config_entry.entry_id,
-                ),
+                )
             },
+            manufacturer="Ard-Tek",
+            model=coordinator.data.get("modele") or "unknown",
+            serial_number=coordinator.data.get("sernum") or "unknown",
+            sw_version=coordinator.data.get("fwwifi") or "unknown",
+            hw_version=coordinator.data.get("fwrout") or "unknown",
         )

@@ -34,5 +34,32 @@
                 "mspv4_4d": "MS_PV4_4d"
             }
         }
+    },
+    "entity": {
+        "select": {
+            "test_routeur": {
+                "name": "Consigne du routeur",
+                "state": {
+                    "inject": "Injection",
+                    "zero": "Zéro équilibre",
+                    "moyen": "Conso. Moyenne",
+                    "fort": "Conso. Forte"
+                }
+            }
+        },
+        "switch": {
+            "manubal": {
+                "name": "Forçage manuel Ballon"
+            },
+            "autobal": {
+                "name": "Programmation horaire Ballon"
+            },
+            "manurad": {
+                "name": "Forçage manuel Radiateur"
+            },
+            "autorad": {
+                "name": "Programmation horaire Radiateur"
+            }
+        }
     }
 }
