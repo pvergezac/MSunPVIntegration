@@ -71,25 +71,29 @@ class MSunPVFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     title=user_input[CONF_HOST], data=user_input
                 )
 
-        schema = vol.Schema({
-            vol.Required(CONF_HOST, default="http://"): selector.TextSelector(
-                selector.TextSelectorConfig(
-                    type=selector.TextSelectorType.URL,
-                )
-            ),
-            vol.Required(CONF_MSUNPV_TYPE, default=MSPV_2_2D): selector.SelectSelector(
-                selector.SelectSelectorConfig(
-                    options=CONF_MSUNPV_TYPES,
-                    mode=selector.SelectSelectorMode.DROPDOWN,
-                )
-            ),
-            vol.Required("nom", default="MsunPV-1"): selector.TextSelector(
-                selector.TextSelectorConfig()
-            ),
-            vol.Required(CONF_SONDES_COMP): selector.BooleanSelector(
-                selector.BooleanSelectorConfig()
-            ),
-        })
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_HOST, default="http://"): selector.TextSelector(
+                    selector.TextSelectorConfig(
+                        type=selector.TextSelectorType.URL,
+                    )
+                ),
+                vol.Required(
+                    CONF_MSUNPV_TYPE, default=MSPV_2_2D
+                ): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=CONF_MSUNPV_TYPES,
+                        mode=selector.SelectSelectorMode.DROPDOWN,
+                    )
+                ),
+                vol.Required("nom", default="MsunPV-1"): selector.TextSelector(
+                    selector.TextSelectorConfig()
+                ),
+                vol.Required(CONF_SONDES_COMP): selector.BooleanSelector(
+                    selector.BooleanSelectorConfig()
+                ),
+            }
+        )
 
         return self.async_show_form(
             step_id="user",
