@@ -1,7 +1,12 @@
+<div align="right">
+
+![](images/pzac_logo-1-2.png)
+
+</div>
+
 <div align="center">
 
 ![alt text](images/MSunPV_logo2.jpeg)
-
 
 # MsunPV Integration
 
