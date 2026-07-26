@@ -73,6 +73,4 @@ async def async_reload_entry(
     entry: ConfigEntry,
 ) -> None:
     """Recharge l'entrée quand les options sont modifiées dans l'UI."""
-    # await async_unload_entry(hass, entry)
-    # await async_setup_entry(hass, entry)
     await hass.config_entries.async_reload(entry.entry_id)

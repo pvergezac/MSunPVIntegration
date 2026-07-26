@@ -1,0 +1,8 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: pytest-cov in /home/vscode/.local/lib/python3.14/site-packages (7.1.0)
+Requirement already satisfied: coverage>=7.10.6 in /home/vscode/.local/lib/python3.14/site-packages (from coverage[toml]>=7.10.6->pytest-cov) (7.14.1)
+Requirement already satisfied: pluggy>=1.2 in /home/vscode/.local/lib/python3.14/site-packages (from pytest-cov) (1.6.0)
+Requirement already satisfied: pytest>=7 in /home/vscode/.local/lib/python3.14/site-packages (from pytest-cov) (9.0.3)
+Requirement already satisfied: iniconfig>=1.0.1 in /home/vscode/.local/lib/python3.14/site-packages (from pytest>=7->pytest-cov) (2.3.0)
+Requirement already satisfied: packaging>=22 in /usr/local/lib/python3.14/site-packages (from pytest>=7->pytest-cov) (26.2)
+Requirement already satisfied: pygments>=2.7.2 in /home/vscode/.local/lib/python3.14/site-packages (from pytest>=7->pytest-cov) (2.20.0)
