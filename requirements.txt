@@ -10,7 +10,7 @@ pylint>=4.0.6
 # Tests
 pytest==9.1.1
 pytest-asyncio>=1.4.0
-pytest-homeassistant-custom-component>=0.13.348
+pytest-homeassistant-custom-component>=0.13.350
 pytest-cov>=7.1.0
 
 # Types stubs
