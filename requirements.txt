@@ -3,7 +3,7 @@ pip>=26.2.1
 
 # Outils de qualité de code
 black>=26.5.1
-ruff==0.16.0
+ruff==0.16.3
 mypy>=2.3.0
 pylint>=4.0.6
 
