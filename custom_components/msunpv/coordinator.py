@@ -132,26 +132,6 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
                 MSPV_INJECTION_RESEAU_CUMUL: 0,
             }
 
-        today = dt_util.now().date()
-        stored_date_str: str | None = stored.get("last_reset_date")
-
-        try:
-            stored_date = (
-                date.fromisoformat(stored_date_str) if stored_date_str else None
-            )
-        except (ValueError, TypeError):
-            stored_date = None
-
-        if stored_date != today:
-            _LOGGER.info("New day detected -- resetting daily counters")
-            stored = {
-                "last_reset_date": dt_util.now().date().isoformat(),
-                MSPV_CONSOMMATION_JOUR: 0,
-                MSPV_CONSOMMATION_RESEAU_CUMUL: 0,
-                MSPV_INJECTION_JOUR: 0,
-                MSPV_INJECTION_RESEAU_CUMUL: 0,
-            }
-
         return stored
 
     async def async_set_manu_bal_on(self) -> None:
