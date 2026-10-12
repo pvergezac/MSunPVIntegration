@@ -22,6 +22,7 @@ from .const import (
     CONF_MSUNPV_TYPE,
     CONF_SONDES_COMP,
     DOMAIN,
+    MSPV_COMPAT,
     MSPV_CONSOMMATION_JOUR,
     MSPV_CONSOMMATION_RESEAU_CUMUL,
     MSPV_FORT,
@@ -53,7 +54,8 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
         self.config_entry = config_entry
         self.url = config_entry.data[CONF_HOST]
         self.name = DOMAIN
-        self.router_type = config_entry.data[CONF_MSUNPV_TYPE]
+        router_type = config_entry.data[CONF_MSUNPV_TYPE]
+        self.router_type = MSPV_COMPAT.get(router_type, router_type)
         self.with_sonde_comp: bool = str(config_entry.data[CONF_SONDES_COMP]) == "True"
 
         self._store: Store = Store(hass, STORAGE_VERSION, STORAGE_KEY)
