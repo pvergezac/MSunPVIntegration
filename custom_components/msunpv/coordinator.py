@@ -22,6 +22,7 @@ from .const import (
     CONF_MSUNPV_TYPE,
     CONF_SONDES_COMP,
     DOMAIN,
+    MSPV_COMPAT,
     MSPV_CONSOMMATION_JOUR,
     MSPV_CONSOMMATION_RESEAU_CUMUL,
     MSPV_FORT,
@@ -53,7 +54,8 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
         self.config_entry = config_entry
         self.url = config_entry.data[CONF_HOST]
         self.name = DOMAIN
-        self.router_type = config_entry.data[CONF_MSUNPV_TYPE]
+        router_type = config_entry.data[CONF_MSUNPV_TYPE]
+        self.router_type = MSPV_COMPAT.get(router_type, router_type)
         self.with_sonde_comp: bool = str(config_entry.data[CONF_SONDES_COMP]) == "True"
 
         self._store: Store = Store(hass, STORAGE_VERSION, STORAGE_KEY)
@@ -124,26 +126,6 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
         stored = await self._store.async_load()
 
         if (not stored) or (stored is None) or (stored["last_reset_date"] is None):
-            stored = {
-                "last_reset_date": dt_util.now().date().isoformat(),
-                MSPV_CONSOMMATION_JOUR: 0,
-                MSPV_CONSOMMATION_RESEAU_CUMUL: 0,
-                MSPV_INJECTION_JOUR: 0,
-                MSPV_INJECTION_RESEAU_CUMUL: 0,
-            }
-
-        today = dt_util.now().date()
-        stored_date_str: str | None = stored.get("last_reset_date")
-
-        try:
-            stored_date = (
-                date.fromisoformat(stored_date_str) if stored_date_str else None
-            )
-        except (ValueError, TypeError):
-            stored_date = None
-
-        if stored_date != today:
-            _LOGGER.info("New day detected -- resetting daily counters")
             stored = {
                 "last_reset_date": dt_util.now().date().isoformat(),
                 MSPV_CONSOMMATION_JOUR: 0,
