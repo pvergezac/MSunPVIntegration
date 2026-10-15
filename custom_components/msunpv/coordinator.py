@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import date, timedelta
+from datetime import timedelta
 from typing import TYPE_CHECKING, Any
 
 from homeassistant.const import CONF_HOST
@@ -124,26 +124,6 @@ class MSunPVDataUpdateCoordinator(DataUpdateCoordinator):
         stored = await self._store.async_load()
 
         if (not stored) or (stored is None) or (stored["last_reset_date"] is None):
-            stored = {
-                "last_reset_date": dt_util.now().date().isoformat(),
-                MSPV_CONSOMMATION_JOUR: 0,
-                MSPV_CONSOMMATION_RESEAU_CUMUL: 0,
-                MSPV_INJECTION_JOUR: 0,
-                MSPV_INJECTION_RESEAU_CUMUL: 0,
-            }
-
-        today = dt_util.now().date()
-        stored_date_str: str | None = stored.get("last_reset_date")
-
-        try:
-            stored_date = (
-                date.fromisoformat(stored_date_str) if stored_date_str else None
-            )
-        except (ValueError, TypeError):
-            stored_date = None
-
-        if stored_date != today:
-            _LOGGER.info("New day detected -- resetting daily counters")
             stored = {
                 "last_reset_date": dt_util.now().date().isoformat(),
                 MSPV_CONSOMMATION_JOUR: 0,
