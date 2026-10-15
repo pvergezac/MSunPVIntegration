@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import date, timedelta
+from datetime import timedelta
 from typing import TYPE_CHECKING, Any
 
 from homeassistant.const import CONF_HOST
