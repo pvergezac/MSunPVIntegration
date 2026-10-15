@@ -107,7 +107,7 @@ def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
 def _hextoint(val: str) -> int:
     """Hex string to signed integer."""
     uintval = int(val, 16)
-    bits = 4 * (len(val))
+    bits = 32
     if uintval >= 2 ** (bits - 1):
         uintval = int(0 - ((2**bits) - uintval))
     return uintval
@@ -227,10 +227,7 @@ class MsunPVApiClient:
             raise ValueError(msg)
 
         self._attributes[MSPV_CONSOMMATION_JOUR] = (
-            float(
-                _hextoint("00" + vals[0])
-            )  # pad 0 à gauche,.update({ car toujourS positif
-            / 10000.0  # de dixième de Wh, en kWh
+            float(_hextoint(vals[0])) / 10000.0  # de dixième de Wh, en kWh
         )
         self._attributes[MSPV_INJECTION_JOUR] = (
             float(_hextoint(vals[1])) / -10000.0  # de dixième de Wh, en kWh positif
